@@ -1,0 +1,102 @@
+
+/* GENERAL PAGE STYLE */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* NAVIGATION BAR */
+.navbar {
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* MAIN CONTENT */
+main {
+    min-height: 80vh;
+}
+
+/* CARD DESIGN */
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: box-shadow 0.2s ease;
+}
+
+.card.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+/* FORM STYLE */
+.form-control {
+    border-radius: 6px;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* USER LIST */
+#userList {
+    min-height: 40px;
+}
+
+/* ORDERS SECTION */
+#message {
+    font-size: 14px;
+}
+
+#ordersContainer {
+    margin-top: 10px;
+}
+
+#ordersContainer .card {
+    border-left: 4px solid #198754;
+}
+
+#ordersContainer .card-title {
+    margin-bottom: 15px;
+}
+
+.order-total {
+    color: #198754;
+    font-weight: bold;
+}
+
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+    main {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .navbar-brand {
+        font-size: 16px;
+    }
+}
