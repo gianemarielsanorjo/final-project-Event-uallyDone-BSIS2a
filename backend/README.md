@@ -200,9 +200,56 @@ GitHub Repository:
 
 https://github.com/gianemarielsanorjo/final-project-Event-uallyDone-BSIS2a
 
----
+## Phase 3 – Backend Development and API Integration
 
-**Project:** EVENT-UALLY DONE  
-**Course:** IS Elec 2 – Web Systems and Technologies  
-**Section:** BSIS 2A  
-**Group:** Event Handlers
+### Database Configuration
+
+The MongoDB database connection was separated from the main server file and transferred to:
+
+- `config/db.js` – Handles the MongoDB connection.
+
+### MVC Structure
+
+The backend was organized using the Model-View-Controller (MVC) approach.
+
+- **Model:** Handles database schemas and data.
+- **View:** Handles the frontend interface.
+- **Controller:** Handles the application logic and CRUD operations.
+- **Routes:** Defines API endpoints and connects them to the appropriate controllers.
+
+### User Controller
+
+The user CRUD logic was transferred to `controllers/usersController.js`.
+
+### User API CRUD Testing
+
+The following endpoints were successfully tested using Thunder Client:
+
+| Method | Endpoint | Result |
+|---|---|---|
+| GET | `/api/users` | Successfully retrieved users |
+| POST | `/api/users` | Successfully created a user |
+| PUT | `/api/users/:id` | Successfully updated a user |
+| DELETE | `/api/users/:id` | Successfully deleted a user |
+
+### Testing Results
+
+All four CRUD operations returned successful responses.
+
+- GET returned existing user records.
+- POST created Maria Santos successfully.
+- PUT updated Maria Santos's name and email.
+- DELETE removed Maria Santos from the database.
+- A final GET request confirmed that the deleted user no longer appeared in the records.
+
+Passwords were not included in the returned user information.
+
+### Phase 3 Status
+
+Database connection configuration, MVC organization, and User API CRUD operations were successfully implemented and tested.
+
+
+Project: EVENT-UALLY DONE  
+Course: IS Elec 2 – Web Systems and Technologies  
+Section: BSIS 2A  
+Group: Event Handlers

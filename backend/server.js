@@ -1,8 +1,11 @@
 
 const express = require("express");
-const mongoose = require("mongoose");
+const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
+
+// Database connection
+const connectDB = require("./config/db");
 
 // Models
 const Order = require("./models/Order");
@@ -16,6 +19,7 @@ const productsRouter = require("./routes/products");
 const app = express();
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -51,13 +55,10 @@ app.get("/api/orders-list", async (req, res) => {
     }
 });
 
-// Connect MongoDB and start server
+// Start server
 async function start() {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-
-        console.log("MongoDB connected!");
-        console.log("Database:", mongoose.connection.name);
+        await connectDB();
 
         const PORT = process.env.PORT || 3000;
 
@@ -65,8 +66,8 @@ async function start() {
             console.log(`Server running on port ${PORT}`);
         });
 
-    } catch (err) {
-        console.error("Startup error:", err.message);
+    } catch (error) {
+        console.error("Server startup error:", error.message);
         process.exit(1);
     }
 }
