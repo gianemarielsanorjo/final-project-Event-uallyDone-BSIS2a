@@ -4,17 +4,16 @@ const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
 
-// Database connection
 const connectDB = require("./config/db");
 
-// Models
 const Order = require("./models/Order");
 
-// Routes
+// Import routes
 const usersRouter = require("./routes/users");
 const itemsRouter = require("./routes/items");
 const ordersRouter = require("./routes/orders");
 const productsRouter = require("./routes/products");
+const authRouter = require("./routes/authRoutes");
 
 const app = express();
 
@@ -23,7 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve frontend
+// Frontend
 app.use(express.static(path.join(__dirname, "public")));
 
 // API Routes
@@ -31,6 +30,9 @@ app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/products", productsRouter);
+app.use("/api/auth", authRouter);
+
+console.log("AUTH ROUTES MOUNTED");
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -39,7 +41,7 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-// Get all orders with populated information
+// Orders list
 app.get("/api/orders-list", async (req, res) => {
     try {
         const orders = await Order.find()
@@ -63,7 +65,12 @@ async function start() {
         const PORT = process.env.PORT || 3000;
 
         app.listen(PORT, () => {
+            console.log("================================");
+            console.log("EVENT-UALLY DONE SERVER");
+            console.log("MongoDB Connected!");
             console.log(`Server running on port ${PORT}`);
+            console.log("Authentication routes loaded!");
+            console.log("================================");
         });
 
     } catch (error) {
@@ -73,3 +80,5 @@ async function start() {
 }
 
 start();
+
+
