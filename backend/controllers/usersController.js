@@ -51,6 +51,27 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+// READ ONE USER BY ID
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+            .select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                error: "User not found"
+            });
+        }
+
+        return res.json(user);
+
+    } catch (err) {
+        return res.status(400).json({
+            error: err.message
+        });
+    }
+};
+
 // UPDATE USER
 exports.updateUser = async (req, res) => {
     try {
@@ -73,7 +94,9 @@ exports.updateUser = async (req, res) => {
         ).select("-password");
 
         if (!updated) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({
+                error: "User not found"
+            });
         }
 
         return res.json(updated);
@@ -89,7 +112,9 @@ exports.deleteUser = async (req, res) => {
         const deleted = await User.findByIdAndDelete(req.params.id);
 
         if (!deleted) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({
+                error: "User not found"
+            });
         }
 
         return res.json({

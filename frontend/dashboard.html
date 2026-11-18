@@ -6,348 +6,273 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVENT-UALLY DONE | Dashboard</title>
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            background-color: #f4f7fb;
+            background-color: #F3F5F8;
             font-family: Arial, sans-serif;
+            color: #212529;
+            margin: 0;
         }
 
-        .navbar {
-            background-color: #294c75;
-        }
-
-        .navbar-brand {
+        /* SIDEBAR */
+        .sidebar {
+            background-color: #203F65;
             color: white;
+            min-height: 100vh;
+            padding: 25px 15px;
+        }
+
+        .sidebar h4 {
+            color: #FFFFFF;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #162F4D;
+            color: #FFFFFF;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 30px;
+        }
+
+        .main-content h2,
+        .main-content h4 {
+            color: #203F65;
             font-weight: bold;
         }
 
-        .navbar-brand:hover {
-            color: #dce8f5;
-        }
-
-        .nav-link {
-            color: white;
-        }
-
-        .nav-link:hover {
-            color: #dce8f5;
-        }
-
-        .dashboard-title {
-            color: #294c75;
-            font-weight: bold;
-        }
-
+        /* DASHBOARD CARDS */
         .stat-card {
+            background-color: #FFFFFF;
             border: none;
-            border-radius: 12px;
-            height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
         .stat-number {
-            color: #294c75;
-            font-size: 30px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #203F65;
+        }
+
+        .stat-card h6 {
+            color: #495057;
             font-weight: bold;
         }
 
-        .section-card {
-            border: none;
-            border-radius: 12px;
+        /* USER BADGE */
+        .user-badge {
+            background-color: #203F65;
+            color: #FFFFFF;
+            padding: 10px 15px;
+            border-radius: 20px;
         }
 
-        .btn-custom {
-            background-color: #294c75;
-            color: white;
+        /* MESSAGE */
+        #message {
+            border-radius: 8px;
         }
 
-        .btn-custom:hover {
-            background-color: #1e3858;
-            color: white;
+        /* BUTTONS */
+        .btn-primary {
+            background-color: #203F65;
+            border-color: #203F65;
         }
 
-        footer {
-            color: #777;
+        .btn-primary:hover {
+            background-color: #162F4D;
+            border-color: #162F4D;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVIGATION BAR -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container">
+<div class="container-fluid">
+    <div class="row">
 
-            <a class="navbar-brand" href="dashboard.html">
-                EVENT-UALLY DONE
-            </a>
+        <!-- SIDEBAR -->
+        <div class="col-md-2 sidebar">
+            <h4>EVENT-UALLY DONE</h4>
 
-            <button class="navbar-toggler bg-light" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarMenu">
-
-                <ul class="navbar-nav ms-auto">
-
-                    <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html">
-                            Dashboard
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="items.html">
-                            Inventory
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="reservations.html">
-                            Reservations
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="checklists.html">
-                            Checklists
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile.html">
-                            Profile
-                        </a>
-                    </li>
-
-                </ul>
-
-                <a href="login.html" class="btn btn-light btn-sm ms-lg-3">
-                    Logout
-                </a>
-
-            </div>
-        </div>
-    </nav>
-
-    <!-- MAIN DASHBOARD -->
-    <main class="container py-5">
-
-        <!-- WELCOME SECTION -->
-        <div class="mb-4">
-            <h2 class="dashboard-title">
-                Dashboard
-            </h2>
-
-            <p class="text-muted">
-                Welcome to EVENT-UALLY DONE!
-                Manage your event materials and equipment efficiently.
-            </p>
+            <a href="/dashboard" class="active">Dashboard</a>
+            <a href="/items.html">Inventory</a>
+            <a href="/reservations.html">Reservations</a>
+            <a href="/login.html" onclick="logout()">Logout</a>
         </div>
 
-        <!-- STATISTICS CARDS -->
-        <div class="row g-4 mb-5">
+        <!-- MAIN CONTENT -->
+        <div class="col-md-10 main-content">
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card stat-card shadow-sm p-3">
-                    <div class="card-body">
-                        <h6 class="text-muted">Total Items</h6>
-                        <h2 class="stat-number">120</h2>
-                        <p class="text-muted mb-0">
-                            Recorded inventory items
-                        </p>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="text-muted">
+                        Welcome to EVENT-UALLY DONE!
+                    </p>
                 </div>
+
+                <span id="userName" class="user-badge">
+                    Guest
+                </span>
             </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card stat-card shadow-sm p-3">
-                    <div class="card-body">
-                        <h6 class="text-muted">Available Items</h6>
-                        <h2 class="stat-number">95</h2>
-                        <p class="text-muted mb-0">
-                            Currently available
-                        </p>
-                    </div>
-                </div>
+            <!-- MESSAGE -->
+            <div id="message" class="alert alert-info">
+                Loading dashboard...
             </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card stat-card shadow-sm p-3">
-                    <div class="card-body">
-                        <h6 class="text-muted">Reservations</h6>
-                        <h2 class="stat-number">15</h2>
-                        <p class="text-muted mb-0">
-                            Reservation records
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="card stat-card shadow-sm p-3">
-                    <div class="card-body">
-                        <h6 class="text-muted">Low Stock Items</h6>
-                        <h2 class="stat-number">10</h2>
-                        <p class="text-muted mb-0">
-                            Items needing attention
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- QUICK ACCESS -->
-        <div class="mb-4">
-            <h4 class="dashboard-title mb-3">
-                Quick Access
-            </h4>
-
-            <div class="row g-4">
+            <!-- STATISTICS -->
+            <div class="row g-3 mb-4">
 
                 <div class="col-md-4">
-                    <div class="card section-card shadow-sm p-4">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Inventory Management</h5>
-
-                            <p class="text-muted">
-                                View and manage event materials
-                                and equipment.
-                            </p>
-
-                            <a href="items.html" class="btn btn-custom">
-                                View Inventory
-                            </a>
-                        </div>
+                    <div class="card stat-card p-4">
+                        <h6>Total Inventory Items</h6>
+                        <div class="stat-number" id="totalItems">0</div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card section-card shadow-sm p-4">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Reservations</h5>
-
-                            <p class="text-muted">
-                                View and organize equipment
-                                reservations.
-                            </p>
-
-                            <a href="reservations.html" class="btn btn-custom">
-                                View Reservations
-                            </a>
-                        </div>
+                    <div class="card stat-card p-4">
+                        <h6>Total Reservations</h6>
+                        <div class="stat-number" id="totalReservations">0</div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card section-card shadow-sm p-4">
-                        <div class="card-body">
-                            <h5 class="fw-bold">Event Checklists</h5>
-
-                            <p class="text-muted">
-                                Organize the materials needed
-                                for upcoming events.
-                            </p>
-
-                            <a href="checklists.html" class="btn btn-custom">
-                                View Checklists
-                            </a>
-                        </div>
+                    <div class="card stat-card p-4">
+                        <h6>System Status</h6>
+                        <div class="stat-number text-success">Active</div>
                     </div>
                 </div>
 
             </div>
-        </div>
 
-        <!-- RECENT INVENTORY -->
-        <div class="card section-card shadow-sm mt-5">
+            <!-- SYSTEM OVERVIEW -->
+            <div class="card stat-card p-4">
+                <h4>System Overview</h4>
 
-            <div class="card-body p-4">
+                <p class="text-muted">
+                    Manage your event equipment, inventory, and reservations here.
+                </p>
 
-                <h4 class="dashboard-title mb-3">
-                    Recent Inventory Overview
-                </h4>
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle">
-
-                        <thead class="table-light">
-                            <tr>
-                                <th>Item Name</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Available</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-                                <td>Plastic Chairs</td>
-                                <td>Furniture</td>
-                                <td>100</td>
-                                <td>80</td>
-                                <td>
-                                    <span class="badge bg-success">
-                                        Available
-                                    </span>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Projector</td>
-                                <td>Electronics</td>
-                                <td>10</td>
-                                <td>7</td>
-                                <td>
-                                    <span class="badge bg-success">
-                                        Available
-                                    </span>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Sound System</td>
-                                <td>Electronics</td>
-                                <td>5</td>
-                                <td>1</td>
-                                <td>
-                                    <span class="badge bg-warning text-dark">
-                                        Low Stock
-                                    </span>
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-                <a href="items.html" class="btn btn-outline-primary btn-sm">
-                    View All Items
-                </a>
-
+                <p id="apiStatus">
+                    Checking API connection...
+                </p>
             </div>
+
         </div>
+    </div>
+</div>
 
-    </main>
+<script>
 
-    <!-- FOOTER -->
-    <footer class="text-center py-4">
-        <small>
-            &copy; 2026 EVENT-UALLY DONE | Event Handlers
-        </small>
-    </footer>
+    // GET LOGGED-IN USER
+    let user = null;
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    try {
+        user = JSON.parse(localStorage.getItem("user") || "null");
+    } catch (error) {
+        console.error("Unable to read user information:", error);
+    }
+
+    document.getElementById("userName").textContent =
+        user && user.full_name ? user.full_name : "Guest";
+
+
+    // LOAD DASHBOARD DATA
+    async function loadDashboard() {
+
+        const message = document.getElementById("message");
+        const apiStatus = document.getElementById("apiStatus");
+
+        try {
+
+            const [itemsResponse, reservationsResponse] =
+                await Promise.all([
+                    fetch("/api/items"),
+                    fetch("/api/reservations")
+                ]);
+
+            if (!itemsResponse.ok) {
+                throw new Error("Unable to load inventory items.");
+            }
+
+            if (!reservationsResponse.ok) {
+                throw new Error("Unable to load reservations.");
+            }
+
+            const items = await itemsResponse.json();
+            const reservations = await reservationsResponse.json();
+
+            if (!Array.isArray(items) || !Array.isArray(reservations)) {
+                throw new Error("Invalid dashboard data received.");
+            }
+
+            document.getElementById("totalItems").textContent =
+                items.length;
+
+            document.getElementById("totalReservations").textContent =
+                reservations.length;
+
+            message.className = "alert alert-success";
+            message.textContent = "Dashboard loaded successfully!";
+
+            apiStatus.textContent =
+                "Connected to EVENT-UALLY DONE API.";
+
+        } catch (error) {
+
+            message.className = "alert alert-warning";
+            message.textContent = error.message;
+
+            apiStatus.textContent =
+                "Some dashboard data could not be loaded.";
+
+            console.error("Dashboard Error:", error);
+
+        }
+    }
+
+
+    // LOGOUT
+    function logout() {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+    }
+
+
+    // START DASHBOARD
+    loadDashboard();
+
+</script>
 
 </body>
 </html>

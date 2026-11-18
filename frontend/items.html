@@ -34,6 +34,40 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            height: 100%;
+            border-left: 5px solid #1e3a5f;
+        }
+
+        .summary-card h6 {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .summary-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1e3a5f;
+            margin-bottom: 0;
+        }
+
+        .summary-available {
+            border-left-color: #198754;
+        }
+
+        .summary-low {
+            border-left-color: #ffc107;
+        }
+
+        .summary-unavailable {
+            border-left-color: #dc3545;
+        }
+
         .btn-primary {
             background-color: #1e3a5f;
             border-color: #1e3a5f;
@@ -76,6 +110,15 @@
             padding: 18px;
             border-radius: 10px;
             margin-bottom: 20px;
+        }
+
+        .alert-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -133,6 +176,57 @@
             </button>
         </div>
 
+        <!-- INVENTORY SUMMARY -->
+        <h5 class="mb-3">Inventory Stock Summary</h5>
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card">
+                    <h6>Total Items</h6>
+                    <p class="summary-number" id="totalItems">0</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card summary-available">
+                    <h6>Available</h6>
+                    <p class="summary-number text-success" id="availableItems">0</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card summary-low">
+                    <h6>Low Stock</h6>
+                    <p class="summary-number text-warning" id="lowStockItems">0</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card summary-unavailable">
+                    <h6>Unavailable</h6>
+                    <p class="summary-number text-danger" id="unavailableItems">0</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LOW STOCK ALERTS -->
+        <div class="content-card mb-4">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h5 class="mb-0">Low-Stock Alerts</h5>
+                <span class="badge bg-warning text-dark" id="lowStockAlertCount">
+                    0 Alerts
+                </span>
+            </div>
+
+            <div id="lowStockAlertList">
+                <p class="text-muted mb-0">Loading stock alerts...</p>
+            </div>
+
+        </div>
+
         <!-- SEARCH AND FILTER -->
         <div class="content-card mb-4">
 
@@ -141,7 +235,6 @@
             <div class="filter-section">
                 <div class="row g-3">
 
-                    <!-- SEARCH -->
                     <div class="col-md-4">
                         <label class="form-label">Search Item</label>
                         <input type="text" class="form-control"
@@ -149,7 +242,6 @@
                             placeholder="Search item name...">
                     </div>
 
-                    <!-- CATEGORY FILTER -->
                     <div class="col-md-4">
                         <label class="form-label">Filter by Category</label>
                         <select class="form-select" id="categoryFilter">
@@ -162,7 +254,6 @@
                         </select>
                     </div>
 
-                    <!-- STATUS FILTER -->
                     <div class="col-md-4">
                         <label class="form-label">Filter by Stock Status</label>
                         <select class="form-select" id="statusFilter">
@@ -364,6 +455,7 @@
 
                 allItems = await response.json();
 
+                updateInventorySummary();
                 displayItems();
 
             } catch (error) {
@@ -379,21 +471,103 @@
 
                 resultCount.textContent = "Unable to load inventory.";
 
+                document.getElementById("lowStockAlertList").innerHTML =
+                    '<p class="text-danger mb-0">Unable to load stock alerts.</p>';
+
             }
         }
 
         // GET STOCK STATUS
         function getItemStatus(item) {
 
-            if (Number(item.available_quantity) === 0) {
+            const availableQuantity = Number(item.available_quantity);
+
+            if (availableQuantity === 0) {
                 return "Unavailable";
             }
 
-            if (Number(item.available_quantity) <= 3) {
+            if (availableQuantity <= 3) {
                 return "Low Stock";
             }
 
             return "Available";
+        }
+
+        // UPDATE INVENTORY SUMMARY AND LOW-STOCK ALERTS
+        function updateInventorySummary() {
+
+            const total = allItems.length;
+
+            const available = allItems.filter(item =>
+                getItemStatus(item) === "Available"
+            ).length;
+
+            const lowStock = allItems.filter(item =>
+                getItemStatus(item) === "Low Stock"
+            );
+
+            const unavailable = allItems.filter(item =>
+                getItemStatus(item) === "Unavailable"
+            ).length;
+
+            // UPDATE SUMMARY CARDS
+            document.getElementById("totalItems").textContent = total;
+            document.getElementById("availableItems").textContent = available;
+            document.getElementById("lowStockItems").textContent = lowStock.length;
+            document.getElementById("unavailableItems").textContent = unavailable;
+
+            // UPDATE LOW-STOCK ALERT COUNT
+            document.getElementById("lowStockAlertCount").textContent =
+                `${lowStock.length} Alert${lowStock.length !== 1 ? "s" : ""}`;
+
+            const alertList = document.getElementById("lowStockAlertList");
+
+            alertList.innerHTML = "";
+
+            // NO LOW-STOCK ITEMS
+            if (lowStock.length === 0) {
+
+                alertList.innerHTML = `
+                    <div class="text-success">
+                        <strong>All good!</strong>
+                        <p class="mb-0">There are currently no low-stock items.</p>
+                    </div>
+                `;
+
+                return;
+            }
+
+            // DISPLAY LOW-STOCK ITEMS
+            lowStock.forEach(item => {
+
+                const alertItem = document.createElement("div");
+                alertItem.className =
+                    "alert-item d-flex justify-content-between align-items-center flex-wrap gap-2";
+
+                const itemInfo = document.createElement("div");
+
+                const itemName = document.createElement("strong");
+                itemName.textContent = item.item_name;
+
+                const category = document.createElement("div");
+                category.className = "text-muted small";
+                category.textContent = item.category;
+
+                itemInfo.appendChild(itemName);
+                itemInfo.appendChild(category);
+
+                const quantityBadge = document.createElement("span");
+                quantityBadge.className = "badge bg-warning text-dark";
+                quantityBadge.textContent =
+                    `${Number(item.available_quantity)} remaining`;
+
+                alertItem.appendChild(itemInfo);
+                alertItem.appendChild(quantityBadge);
+
+                alertList.appendChild(alertItem);
+
+            });
+
         }
 
         // DISPLAY AND FILTER ITEMS
@@ -405,7 +579,7 @@
 
             const filteredItems = allItems.filter(item => {
 
-                const matchesSearch = item.item_name
+                const matchesSearch = String(item.item_name || "")
                     .toLowerCase()
                     .includes(searchValue);
 
@@ -515,9 +689,7 @@
 
         // SEARCH AND FILTER EVENTS
         searchInput.addEventListener("input", displayItems);
-
         categoryFilter.addEventListener("change", displayItems);
-
         statusFilter.addEventListener("change", displayItems);
 
         // CLEAR FILTERS
@@ -732,3 +904,4 @@
 
 </body>
 </html>
+

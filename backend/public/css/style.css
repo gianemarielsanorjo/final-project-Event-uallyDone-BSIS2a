@@ -2,19 +2,30 @@
 /* GENERAL PAGE STYLE */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #F3F5F8;
     margin: 0;
     padding: 0;
+    color: #212529;
 }
 
 /* NAVIGATION BAR */
 .navbar {
     padding: 15px 0;
+    background-color: #203F65 !important;
 }
 
 .navbar-brand {
     font-weight: bold;
     letter-spacing: 1px;
+    color: #FFFFFF !important;
+}
+
+.navbar .nav-link {
+    color: #FFFFFF !important;
+}
+
+.navbar .nav-link:hover {
+    color: #FFCA28 !important;
 }
 
 /* MAIN CONTENT */
@@ -24,13 +35,14 @@ main {
 
 /* CARD DESIGN */
 .card {
+    background-color: #FFFFFF;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     transition: box-shadow 0.2s ease;
 }
 
 .card.shadow-sm {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
 .card-body {
@@ -40,7 +52,7 @@ main {
 .card-title {
     font-weight: bold;
     margin-bottom: 20px;
-    color: #343a40;
+    color: #203F65;
 }
 
 /* FORM STYLE */
@@ -49,13 +61,24 @@ main {
 }
 
 .form-control:focus {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-color: #203F65;
+    box-shadow: 0 0 0 0.2rem rgba(32, 63, 101, 0.15);
 }
 
+/* BUTTON STYLE */
 .btn {
     border-radius: 6px;
     font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #203F65;
+    border-color: #203F65;
+}
+
+.btn-primary:hover {
+    background-color: #162F4D;
+    border-color: #162F4D;
 }
 
 /* USER LIST */
@@ -73,7 +96,7 @@ main {
 }
 
 #ordersContainer .card {
-    border-left: 4px solid #198754;
+    border-left: 4px solid #168B59;
 }
 
 #ordersContainer .card-title {
@@ -81,7 +104,7 @@ main {
 }
 
 .order-total {
-    color: #198754;
+    color: #168B59;
     font-weight: bold;
 }
 

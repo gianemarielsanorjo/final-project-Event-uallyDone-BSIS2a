@@ -10,158 +10,121 @@
 
     <style>
         body {
-            background-color: #f4f7fb;
+            background-color: #f4f6f9;
             font-family: Arial, sans-serif;
         }
 
-        .navbar {
-            background-color: #173b70;
+        .container {
+            margin-top: 40px;
         }
 
-        .navbar-brand, .nav-link {
-            color: white !important;
-        }
-
-        .page-header, .content-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
             margin-bottom: 25px;
         }
 
-        .content-card {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .btn-primary {
-            background-color: #245ca6;
+        .card {
             border: none;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
         }
 
-        .status-approved {
+        .table th {
+            background-color: #e9eef5;
+            white-space: nowrap;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.Approved {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status.Rejected {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        #stockInfo {
+            font-size: 13px;
             color: #198754;
-            font-weight: bold;
-        }
-
-        .status-pending {
-            color: #fd7e14;
-            font-weight: bold;
-        }
-
-        .status-rejected {
-            color: #dc3545;
-            font-weight: bold;
+            margin-top: 5px;
         }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="dashboard.html">
-            EVENT-UALLY DONE
-        </a>
-
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
-            <a class="nav-link" href="items.html">Inventory</a>
-            <a class="nav-link active" href="reservations.html">Reservations</a>
-            <a class="nav-link" href="checklists.html">Checklists</a>
-            <a class="nav-link" href="profile.html">Profile</a>
-        </div>
-    </div>
-</nav>
-
-<div class="container py-4">
+<div class="container pb-5">
 
     <div class="page-header">
-        <h2 class="fw-bold">Reservation Management</h2>
-        <p class="text-muted mb-0">
-            View and manage equipment reservations for school events.
-        </p>
+        <div>
+            <h2 class="fw-bold">Reservations</h2>
+            <p class="text-muted mb-0">
+                Manage your event equipment reservations.
+            </p>
+        </div>
+
+        <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addReservationModal">
+            + New Reservation
+        </button>
     </div>
 
-    <div class="content-card">
-
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-            <h5 class="fw-bold mb-0">Reservation List</h5>
-
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
-                + New Reservation
-            </button>
-        </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Search event name...">
-            </div>
-
-            <div class="col-md-6">
-                <select class="form-select">
-                    <option selected>All Status</option>
-                    <option>Pending</option>
-                    <option>Approved</option>
-                    <option>Rejected</option>
-                </select>
-            </div>
-        </div>
-
+    <div class="card p-3">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
                     <tr>
                         <th>Event Name</th>
-                        <th>Reserved Item</th>
+                        <th>Item</th>
                         <th>Quantity</th>
                         <th>Event Date</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="reservationTable">
                     <tr>
-                        <td>IT Week</td>
-                        <td>Plastic Chairs</td>
-                        <td>50</td>
-                        <td>2026-12-05</td>
-                        <td><span class="status-approved">Approved</span></td>
-                        <td><button class="btn btn-sm btn-outline-primary">View</button></td>
-                    </tr>
-
-                    <tr>
-                        <td>Seminar 2026</td>
-                        <td>Projector</td>
-                        <td>2</td>
-                        <td>2026-12-10</td>
-                        <td><span class="status-pending">Pending</span></td>
-                        <td><button class="btn btn-sm btn-outline-primary">View</button></td>
-                    </tr>
-
-                    <tr>
-                        <td>Acquaintance Party</td>
-                        <td>Sound System</td>
-                        <td>1</td>
-                        <td>2026-12-15</td>
-                        <td><span class="status-rejected">Rejected</span></td>
-                        <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                        <td colspan="5" class="text-center">
+                            Loading reservations...
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
     </div>
+
 </div>
 
-<!-- New Reservation Modal -->
+
+<!-- ADD RESERVATION MODAL -->
 <div class="modal fade" id="addReservationModal" tabindex="-1">
+
     <div class="modal-dialog">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Create New Reservation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title fw-bold">New Reservation</h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
             </div>
 
             <div class="modal-body">
@@ -170,38 +133,71 @@
 
                     <div class="mb-3">
                         <label class="form-label">Event Name</label>
-                        <input type="text" class="form-control" name="event_name" required>
+                        <input type="text"
+                               class="form-control"
+                               name="event_name"
+                               placeholder="Enter event name"
+                               required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Reserved Item</label>
-                        <select class="form-select" name="item_name" required>
-                            <option value="">Select Item</option>
-                            <option>Plastic Chairs</option>
-                            <option>Projector</option>
-                            <option>Sound System</option>
-                            <option>Folding Tables</option>
+                        <label class="form-label">Inventory Item</label>
+
+                        <select class="form-select"
+                                name="item"
+                                id="itemSelect"
+                                required>
+                            <option value="">Loading inventory...</option>
                         </select>
+
+                        <div id="stockInfo"></div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity" min="1" required>
+
+                        <input type="number"
+                               class="form-control"
+                               name="quantity"
+                               id="quantityInput"
+                               min="1"
+                               required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Event Date</label>
-                        <input type="date" class="form-control" name="event_date" required>
+
+                        <input type="date"
+                               class="form-control"
+                               name="event_date"
+                               id="eventDate"
+                               required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Purpose / Description</label>
-                        <textarea class="form-control" name="description" rows="3"></textarea>
+                        <label class="form-label">Description</label>
+
+                        <textarea class="form-control"
+                                  name="description"
+                                  rows="3"
+                                  placeholder="Optional description"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        Submit Reservation
-                    </button>
+                    <div id="formMessage"></div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary"
+                                id="submitButton">
+                            Submit Reservation
+                        </button>
+                    </div>
 
                 </form>
 
@@ -210,7 +206,347 @@
     </div>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+const API_BASE = "http://localhost:3000/api";
+
+let inventoryItems = [];
+
+
+// LOAD INVENTORY ITEMS
+async function loadItems() {
+
+    const select = document.getElementById("itemSelect");
+
+    try {
+
+        const response = await fetch(`${API_BASE}/items`);
+
+        if (!response.ok) {
+            throw new Error("Failed to load inventory.");
+        }
+
+        inventoryItems = await response.json();
+
+        // Clear old options to prevent duplicates
+        select.innerHTML = '<option value="">Select an item</option>';
+
+        const availableItems = inventoryItems.filter(item =>
+            Number(item.available_quantity) > 0 &&
+            item.status !== "Unavailable"
+        );
+
+        if (availableItems.length === 0) {
+            select.innerHTML =
+                '<option value="">No available items</option>';
+            return;
+        }
+
+        availableItems.forEach(item => {
+
+            const option = document.createElement("option");
+
+            option.value = item._id;
+
+            option.textContent =
+                `${item.item_name} (${item.available_quantity} available)`;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error("Inventory loading error:", error);
+
+        select.innerHTML =
+            '<option value="">Unable to load inventory</option>';
+
+    }
+}
+
+
+// UPDATE STOCK INFORMATION WHEN ITEM IS SELECTED
+document.getElementById("itemSelect").addEventListener("change", function() {
+
+    const selectedItem = inventoryItems.find(
+        item => item._id === this.value
+    );
+
+    const quantityInput = document.getElementById("quantityInput");
+    const stockInfo = document.getElementById("stockInfo");
+
+    if (selectedItem) {
+
+        quantityInput.max = selectedItem.available_quantity;
+
+        stockInfo.textContent =
+            `Available stock: ${selectedItem.available_quantity}`;
+
+        quantityInput.value = "";
+
+    } else {
+
+        quantityInput.removeAttribute("max");
+
+        stockInfo.textContent = "";
+
+    }
+
+});
+
+
+// LOAD RESERVATIONS
+async function loadReservations() {
+
+    const table = document.getElementById("reservationTable");
+
+    try {
+
+        const response = await fetch(`${API_BASE}/reservations`);
+
+        if (!response.ok) {
+            throw new Error("Failed to load reservations.");
+        }
+
+        const reservations = await response.json();
+
+        table.innerHTML = "";
+
+        if (!reservations.length) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted">
+                        No reservations found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        reservations.forEach(reservation => {
+
+            const row = document.createElement("tr");
+
+            const itemName =
+                reservation.item?.item_name || "Unknown Item";
+
+            const eventDate = reservation.event_date
+                ? new Date(reservation.event_date).toLocaleDateString()
+                : "N/A";
+
+            const values = [
+                reservation.event_name,
+                itemName,
+                reservation.quantity,
+                eventDate
+            ];
+
+            values.forEach(value => {
+
+                const cell = document.createElement("td");
+
+                cell.textContent = value ?? "N/A";
+
+                row.appendChild(cell);
+
+            });
+
+            const statusCell = document.createElement("td");
+
+            const badge = document.createElement("span");
+
+            const status = reservation.status || "Pending";
+
+            badge.className = `status ${status}`;
+
+            badge.textContent = status;
+
+            statusCell.appendChild(badge);
+
+            row.appendChild(statusCell);
+
+            table.appendChild(row);
+
+        });
+
+    } catch (error) {
+
+        console.error("Reservation loading error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-danger">
+                    Unable to load reservations. Check your server.
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+// SUBMIT RESERVATION
+document.getElementById("reservationForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const form = this;
+
+    const submitButton = document.getElementById("submitButton");
+
+    const message = document.getElementById("formMessage");
+
+    const formData = new FormData(form);
+
+    const selectedItem = inventoryItems.find(
+        item => item._id === formData.get("item")
+    );
+
+    const quantity = Number(formData.get("quantity"));
+
+    if (!selectedItem) {
+
+        message.innerHTML = `
+            <div class="alert alert-danger">
+                Please select an inventory item.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    if (
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        quantity > selectedItem.available_quantity
+    ) {
+
+        message.innerHTML = `
+            <div class="alert alert-danger">
+                Invalid quantity. Please check available stock.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    const reservationData = {
+
+        event_name: formData.get("event_name"),
+
+        item: formData.get("item"),
+
+        quantity: quantity,
+
+        event_date: formData.get("event_date"),
+
+        description: formData.get("description")
+
+    };
+
+    try {
+
+        submitButton.disabled = true;
+
+        submitButton.textContent = "Submitting...";
+
+        message.innerHTML = "";
+
+        const response = await fetch(`${API_BASE}/reservations`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(reservationData)
+
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message || "Reservation failed."
+            );
+
+        }
+
+        message.innerHTML = `
+            <div class="alert alert-success">
+                Reservation submitted successfully!
+            </div>
+        `;
+
+        form.reset();
+
+        document.getElementById("stockInfo").textContent = "";
+
+        document.getElementById("quantityInput").removeAttribute("max");
+
+        await loadItems();
+
+        await loadReservations();
+
+        setTimeout(() => {
+
+            const modalElement =
+                document.getElementById("addReservationModal");
+
+            const modal =
+                bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            message.innerHTML = "";
+
+        }, 1000);
+
+    } catch (error) {
+
+        message.innerHTML = `
+            <div class="alert alert-danger">
+                ${error.message}
+            </div>
+        `;
+
+        console.error("Reservation submission error:", error);
+
+    } finally {
+
+        submitButton.disabled = false;
+
+        submitButton.textContent = "Submit Reservation";
+
+    }
+
+});
+
+
+// PREVENT PAST EVENT DATES
+document.getElementById("eventDate").min =
+    new Date().toLocaleDateString("en-CA");
+
+
+// INITIAL PAGE LOAD
+loadItems();
+
+loadReservations();
+
+</script>
 
 </body>
 </html>
