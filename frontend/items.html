@@ -4,55 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory | EVENT-UALLY DONE</title>
+    <title>EVENT-UALLY DONE | Inventory</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #F3F5F8;
             font-family: Arial, sans-serif;
+            color: #212529;
+            margin: 0;
         }
 
-        .navbar {
-            background-color: #1e3a5f;
+        /* SIDEBAR */
+        .sidebar {
+            background-color: #203F65;
+            color: white;
+            min-height: 100vh;
+            padding: 25px 15px;
         }
 
-        .navbar-brand, .nav-link {
-            color: white !important;
+        .sidebar h4 {
+            color: #FFFFFF;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
         }
 
-        .page-title {
-            color: #1e3a5f;
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #162F4D;
+            color: #FFFFFF;
+        }
+
+        .logout-link {
+            cursor: pointer;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 30px;
+        }
+
+        .page-title,
+        .main-content h5 {
+            color: #203F65;
             font-weight: bold;
         }
 
+        /* CONTENT CARDS */
+        .content-card,
+        .summary-card {
+            background-color: #FFFFFF;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
         .content-card {
-            background: white;
             padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
         .summary-card {
-            background: white;
             padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             height: 100%;
-            border-left: 5px solid #1e3a5f;
+            border-left: 5px solid #203F65;
         }
 
         .summary-card h6 {
-            color: #6c757d;
+            color: #495057;
             font-size: 14px;
+            font-weight: bold;
             margin-bottom: 10px;
         }
 
         .summary-number {
             font-size: 30px;
             font-weight: bold;
-            color: #1e3a5f;
+            color: #203F65;
             margin-bottom: 0;
         }
 
@@ -68,15 +106,19 @@
             border-left-color: #dc3545;
         }
 
+        /* BUTTONS */
         .btn-primary {
-            background-color: #1e3a5f;
-            border-color: #1e3a5f;
+            background-color: #203F65;
+            border-color: #203F65;
         }
 
-        .btn-primary:hover {
-            background-color: #142942;
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #162F4D;
+            border-color: #162F4D;
         }
 
+        /* STATUS BADGES */
         .status-available,
         .status-low,
         .status-unavailable {
@@ -101,17 +143,26 @@
             background-color: #f8d7da;
         }
 
-        .table thead {
-            background-color: #e9eef5;
+        /* TABLE */
+        .table thead th {
+            background-color: #203F65;
+            color: #FFFFFF;
+            white-space: nowrap;
         }
 
+        .table {
+            margin-bottom: 0;
+        }
+
+        /* FILTER SECTION */
         .filter-section {
-            background-color: #f8f9fa;
+            background-color: #F3F5F8;
             padding: 18px;
             border-radius: 10px;
             margin-bottom: 20px;
         }
 
+        /* LOW STOCK ALERTS */
         .alert-item {
             border-bottom: 1px solid #eee;
             padding: 12px 0;
@@ -120,132 +171,252 @@
         .alert-item:last-child {
             border-bottom: none;
         }
+
+        /* MODALS */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            background-color: #203F65;
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                padding: 20px 15px;
+            }
+
+            .sidebar h4 {
+                margin-bottom: 15px;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVIGATION -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="dashboard.html">
-                EVENT-UALLY DONE
-            </a>
+<div class="container-fluid">
+    <div class="row">
 
-            <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navbarMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- SIDEBAR -->
+        <div class="col-md-2 sidebar">
 
-            <div class="collapse navbar-collapse" id="navbarMenu">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="items.html">Inventory</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reservations.html">Reservations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="checklists.html">Checklists</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile.html">Profile</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+            <h4>EVENT-UALLY DONE</h4>
 
-    <!-- MAIN CONTENT -->
-    <div class="container mt-5 mb-5">
-
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-            <div>
-                <h2 class="page-title">Inventory Management</h2>
-                <p class="text-muted mb-0">
-                    Manage and monitor available event equipment and materials.
-                </p>
-            </div>
-
-            <button class="btn btn-primary"
-                data-bs-toggle="modal" data-bs-target="#addItemModal">
-                + Add New Item
-            </button>
-        </div>
-
-        <!-- INVENTORY SUMMARY -->
-        <h5 class="mb-3">Inventory Stock Summary</h5>
-
-        <div class="row g-3 mb-4">
-
-            <div class="col-md-3 col-sm-6">
-                <div class="summary-card">
-                    <h6>Total Items</h6>
-                    <p class="summary-number" id="totalItems">0</p>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="summary-card summary-available">
-                    <h6>Available</h6>
-                    <p class="summary-number text-success" id="availableItems">0</p>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="summary-card summary-low">
-                    <h6>Low Stock</h6>
-                    <p class="summary-number text-warning" id="lowStockItems">0</p>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="summary-card summary-unavailable">
-                    <h6>Unavailable</h6>
-                    <p class="summary-number text-danger" id="unavailableItems">0</p>
-                </div>
-            </div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/items.html" class="active">Inventory</a>
+            <a href="/reservations.html">Reservations</a>
+            <a href="/checklists.html">Checklists</a>
+            <a href="#" class="logout-link" onclick="logout(event)">Logout</a>
 
         </div>
 
-        <!-- LOW STOCK ALERTS -->
-        <div class="content-card mb-4">
+        <!-- MAIN CONTENT -->
+        <div class="col-md-10 main-content">
 
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                <h5 class="mb-0">Low-Stock Alerts</h5>
-                <span class="badge bg-warning text-dark" id="lowStockAlertCount">
-                    0 Alerts
-                </span>
+            <!-- PAGE HEADER -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+                <div>
+                    <h2 class="page-title">Inventory Management</h2>
+                    <p class="text-muted mb-0">
+                        Manage and monitor available event equipment and materials.
+                    </p>
+                </div>
+
+                <button class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addItemModal">
+                    + Add New Item
+                </button>
+
             </div>
 
-            <div id="lowStockAlertList">
-                <p class="text-muted mb-0">Loading stock alerts...</p>
+            <!-- INVENTORY SUMMARY -->
+            <h5 class="mb-3">Inventory Stock Summary</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="summary-card">
+                        <h6>Total Items</h6>
+                        <p class="summary-number" id="totalItems">0</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="summary-card summary-available">
+                        <h6>Available</h6>
+                        <p class="summary-number text-success" id="availableItems">0</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="summary-card summary-low">
+                        <h6>Low Stock</h6>
+                        <p class="summary-number text-warning" id="lowStockItems">0</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="summary-card summary-unavailable">
+                        <h6>Unavailable</h6>
+                        <p class="summary-number text-danger" id="unavailableItems">0</p>
+                    </div>
+                </div>
+
             </div>
 
-        </div>
+            <!-- LOW STOCK ALERTS -->
+            <div class="content-card mb-4">
 
-        <!-- SEARCH AND FILTER -->
-        <div class="content-card mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
 
-            <h5 class="mb-3">Search and Filter Inventory</h5>
+                    <h5 class="mb-0">Low-Stock Alerts</h5>
 
-            <div class="filter-section">
-                <div class="row g-3">
+                    <span class="badge bg-warning text-dark" id="lowStockAlertCount">
+                        0 Alerts
+                    </span>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Search Item</label>
-                        <input type="text" class="form-control"
-                            id="searchInput"
-                            placeholder="Search item name...">
+                </div>
+
+                <div id="lowStockAlertList">
+                    <p class="text-muted mb-0">Loading stock alerts...</p>
+                </div>
+
+            </div>
+
+            <!-- SEARCH AND FILTER -->
+            <div class="content-card mb-4">
+
+                <h5 class="mb-3">Search and Filter Inventory</h5>
+
+                <div class="filter-section">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label class="form-label">Search Item</label>
+                            <input type="text"
+                                class="form-control"
+                                id="searchInput"
+                                placeholder="Search item name...">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Decorations">Decorations</option>
+                                <option value="Sound System">Sound System</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Stock Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="Available">Available</option>
+                                <option value="Low Stock">Low Stock</option>
+                                <option value="Unavailable">Unavailable</option>
+                            </select>
+                        </div>
+
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Filter by Category</label>
-                        <select class="form-select" id="categoryFilter">
-                            <option value="">All Categories</option>
+                    <div class="mt-3">
+                        <button class="btn btn-secondary btn-sm" id="clearFilters">
+                            Clear Filters
+                        </button>
+                    </div>
+
+                </div>
+
+                <p class="text-muted mb-0" id="resultCount">
+                    Loading inventory...
+                </p>
+
+            </div>
+
+            <!-- INVENTORY TABLE -->
+            <div class="content-card">
+
+                <h5 class="mb-3">Inventory List</h5>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Total Quantity</th>
+                                <th>Available</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="itemsTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    Loading inventory...
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Inventory Item</h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="addItemForm">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" class="form-control"
+                            id="item_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="category" required>
+                            <option value="">Select Category</option>
                             <option value="Electronics">Electronics</option>
                             <option value="Furniture">Furniture</option>
                             <option value="Decorations">Decorations</option>
@@ -254,653 +425,586 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Filter by Stock Status</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="">All Status</option>
-                            <option value="Available">Available</option>
-                            <option value="Low Stock">Low Stock</option>
-                            <option value="Unavailable">Unavailable</option>
+                    <div class="mb-3">
+                        <label class="form-label">Total Quantity</label>
+                        <input type="number" class="form-control"
+                            id="quantity" min="0" step="1" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                        id="saveItemButton">
+                        Save Item
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- EDIT ITEM MODAL -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Inventory Item</h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="editItemForm">
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="editItemId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" class="form-control"
+                            id="edit_item_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select"
+                            id="edit_category" required>
+                            <option value="">Select Category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Decorations">Decorations</option>
+                            <option value="Sound System">Sound System</option>
+                            <option value="Others">Others</option>
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Total Quantity</label>
+                        <input type="number" class="form-control"
+                            id="edit_quantity" min="0" step="1" required>
+                    </div>
+
                 </div>
 
-                <div class="mt-3">
-                    <button class="btn btn-secondary btn-sm"
-                        id="clearFilters">
-                        Clear Filters
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancel
                     </button>
-                </div>
-            </div>
 
-            <p class="text-muted mb-0" id="resultCount">
-                Loading inventory...
-            </p>
+                    <button type="submit" class="btn btn-primary"
+                        id="updateItemButton">
+                        Update Item
+                    </button>
 
-        </div>
-
-        <!-- INVENTORY TABLE -->
-        <div class="content-card">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Category</th>
-                            <th>Total Quantity</th>
-                            <th>Available</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="itemsTableBody">
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                Loading inventory...
-                            </td>
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ADD ITEM MODAL -->
-    <div class="modal fade" id="addItemModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Inventory Item</h5>
-                    <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
                 </div>
 
-                <form id="addItemForm">
-                    <div class="modal-body">
+            </form>
 
-                        <div class="mb-3">
-                            <label class="form-label">Item Name</label>
-                            <input type="text" class="form-control"
-                                id="item_name" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Category</label>
-                            <select class="form-select" id="category" required>
-                                <option value="">Select Category</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Furniture">Furniture</option>
-                                <option value="Decorations">Decorations</option>
-                                <option value="Sound System">Sound System</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Total Quantity</label>
-                            <input type="number" class="form-control"
-                                id="quantity" min="0" step="1" required>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
-
-                        <button type="submit" class="btn btn-primary"
-                            id="saveItemButton">Save Item</button>
-                    </div>
-                </form>
-
-            </div>
         </div>
     </div>
+</div>
 
-    <!-- EDIT ITEM MODAL -->
-    <div class="modal fade" id="editItemModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
+<!-- BOOTSTRAP JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Inventory Item</h5>
-                    <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
-                </div>
+<script>
 
-                <form id="editItemForm">
-                    <div class="modal-body">
+    const API_URL = "/api/items";
 
-                        <input type="hidden" id="editItemId">
+    const itemsTableBody = document.getElementById("itemsTableBody");
+    const resultCount = document.getElementById("resultCount");
 
-                        <div class="mb-3">
-                            <label class="form-label">Item Name</label>
-                            <input type="text" class="form-control"
-                                id="edit_item_name" required>
-                        </div>
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const statusFilter = document.getElementById("statusFilter");
 
-                        <div class="mb-3">
-                            <label class="form-label">Category</label>
-                            <select class="form-select"
-                                id="edit_category" required>
-                                <option value="">Select Category</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Furniture">Furniture</option>
-                                <option value="Decorations">Decorations</option>
-                                <option value="Sound System">Sound System</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
+    const addItemForm = document.getElementById("addItemForm");
+    const editItemForm = document.getElementById("editItemForm");
 
-                        <div class="mb-3">
-                            <label class="form-label">Total Quantity</label>
-                            <input type="number" class="form-control"
-                                id="edit_quantity" min="0" step="1" required>
-                        </div>
+    const saveItemButton = document.getElementById("saveItemButton");
+    const updateItemButton = document.getElementById("updateItemButton");
 
-                    </div>
+    let allItems = [];
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+    // GET ALL INVENTORY ITEMS
+    async function loadItems() {
 
-                        <button type="submit" class="btn btn-primary"
-                            id="updateItemButton">Update Item</button>
-                    </div>
-                </form>
+        try {
 
-            </div>
-        </div>
-    </div>
+            const response = await fetch(API_URL);
 
-    <!-- BOOTSTRAP JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-
-        const API_URL = "http://localhost:3000/api/items";
-
-        const itemsTableBody = document.getElementById("itemsTableBody");
-        const resultCount = document.getElementById("resultCount");
-
-        const searchInput = document.getElementById("searchInput");
-        const categoryFilter = document.getElementById("categoryFilter");
-        const statusFilter = document.getElementById("statusFilter");
-
-        const addItemForm = document.getElementById("addItemForm");
-        const editItemForm = document.getElementById("editItemForm");
-
-        const saveItemButton = document.getElementById("saveItemButton");
-        const updateItemButton = document.getElementById("updateItemButton");
-
-        let allItems = [];
-
-        // GET ALL INVENTORY ITEMS
-        async function loadItems() {
-
-            try {
-                const response = await fetch(API_URL);
-
-                if (!response.ok) {
-                    throw new Error("Failed to load inventory.");
-                }
-
-                allItems = await response.json();
-
-                updateInventorySummary();
-                displayItems();
-
-            } catch (error) {
-                console.error(error);
-
-                itemsTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center text-danger">
-                            Unable to load inventory.
-                        </td>
-                    </tr>
-                `;
-
-                resultCount.textContent = "Unable to load inventory.";
-
-                document.getElementById("lowStockAlertList").innerHTML =
-                    '<p class="text-danger mb-0">Unable to load stock alerts.</p>';
-
-            }
-        }
-
-        // GET STOCK STATUS
-        function getItemStatus(item) {
-
-            const availableQuantity = Number(item.available_quantity);
-
-            if (availableQuantity === 0) {
-                return "Unavailable";
+            if (!response.ok) {
+                throw new Error("Failed to load inventory.");
             }
 
-            if (availableQuantity <= 3) {
-                return "Low Stock";
-            }
+            allItems = await response.json();
 
-            return "Available";
-        }
-
-        // UPDATE INVENTORY SUMMARY AND LOW-STOCK ALERTS
-        function updateInventorySummary() {
-
-            const total = allItems.length;
-
-            const available = allItems.filter(item =>
-                getItemStatus(item) === "Available"
-            ).length;
-
-            const lowStock = allItems.filter(item =>
-                getItemStatus(item) === "Low Stock"
-            );
-
-            const unavailable = allItems.filter(item =>
-                getItemStatus(item) === "Unavailable"
-            ).length;
-
-            // UPDATE SUMMARY CARDS
-            document.getElementById("totalItems").textContent = total;
-            document.getElementById("availableItems").textContent = available;
-            document.getElementById("lowStockItems").textContent = lowStock.length;
-            document.getElementById("unavailableItems").textContent = unavailable;
-
-            // UPDATE LOW-STOCK ALERT COUNT
-            document.getElementById("lowStockAlertCount").textContent =
-                `${lowStock.length} Alert${lowStock.length !== 1 ? "s" : ""}`;
-
-            const alertList = document.getElementById("lowStockAlertList");
-
-            alertList.innerHTML = "";
-
-            // NO LOW-STOCK ITEMS
-            if (lowStock.length === 0) {
-
-                alertList.innerHTML = `
-                    <div class="text-success">
-                        <strong>All good!</strong>
-                        <p class="mb-0">There are currently no low-stock items.</p>
-                    </div>
-                `;
-
-                return;
-            }
-
-            // DISPLAY LOW-STOCK ITEMS
-            lowStock.forEach(item => {
-
-                const alertItem = document.createElement("div");
-                alertItem.className =
-                    "alert-item d-flex justify-content-between align-items-center flex-wrap gap-2";
-
-                const itemInfo = document.createElement("div");
-
-                const itemName = document.createElement("strong");
-                itemName.textContent = item.item_name;
-
-                const category = document.createElement("div");
-                category.className = "text-muted small";
-                category.textContent = item.category;
-
-                itemInfo.appendChild(itemName);
-                itemInfo.appendChild(category);
-
-                const quantityBadge = document.createElement("span");
-                quantityBadge.className = "badge bg-warning text-dark";
-                quantityBadge.textContent =
-                    `${Number(item.available_quantity)} remaining`;
-
-                alertItem.appendChild(itemInfo);
-                alertItem.appendChild(quantityBadge);
-
-                alertList.appendChild(alertItem);
-
-            });
-
-        }
-
-        // DISPLAY AND FILTER ITEMS
-        function displayItems() {
-
-            const searchValue = searchInput.value.toLowerCase().trim();
-            const selectedCategory = categoryFilter.value;
-            const selectedStatus = statusFilter.value;
-
-            const filteredItems = allItems.filter(item => {
-
-                const matchesSearch = String(item.item_name || "")
-                    .toLowerCase()
-                    .includes(searchValue);
-
-                const matchesCategory =
-                    !selectedCategory ||
-                    item.category === selectedCategory;
-
-                const matchesStatus =
-                    !selectedStatus ||
-                    getItemStatus(item) === selectedStatus;
-
-                return matchesSearch && matchesCategory && matchesStatus;
-
-            });
-
-            itemsTableBody.innerHTML = "";
-
-            resultCount.textContent =
-                `Showing ${filteredItems.length} of ${allItems.length} inventory items`;
-
-            if (filteredItems.length === 0) {
-
-                itemsTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center text-muted">
-                            No matching inventory items found.
-                        </td>
-                    </tr>
-                `;
-
-                return;
-            }
-
-            filteredItems.forEach(item => {
-
-                const row = document.createElement("tr");
-
-                // ITEM NAME
-                const nameCell = document.createElement("td");
-                nameCell.textContent = item.item_name;
-                row.appendChild(nameCell);
-
-                // CATEGORY
-                const categoryCell = document.createElement("td");
-                categoryCell.textContent = item.category;
-                row.appendChild(categoryCell);
-
-                // TOTAL QUANTITY
-                const quantityCell = document.createElement("td");
-                quantityCell.textContent = item.quantity;
-                row.appendChild(quantityCell);
-
-                // AVAILABLE QUANTITY
-                const availableCell = document.createElement("td");
-                availableCell.textContent = item.available_quantity;
-                row.appendChild(availableCell);
-
-                // STATUS
-                const statusCell = document.createElement("td");
-                const statusBadge = document.createElement("span");
-
-                const status = getItemStatus(item);
-
-                statusBadge.textContent = status;
-
-                if (status === "Available") {
-                    statusBadge.className = "status-available";
-                } else if (status === "Low Stock") {
-                    statusBadge.className = "status-low";
-                } else {
-                    statusBadge.className = "status-unavailable";
-                }
-
-                statusCell.appendChild(statusBadge);
-                row.appendChild(statusCell);
-
-                // ACTION BUTTONS
-                const actionCell = document.createElement("td");
-
-                const editButton = document.createElement("button");
-                editButton.textContent = "Edit";
-                editButton.className = "btn btn-warning btn-sm me-2";
-
-                editButton.addEventListener("click", () => {
-                    openEditModal(item);
-                });
-
-                actionCell.appendChild(editButton);
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.className = "btn btn-danger btn-sm";
-
-                deleteButton.addEventListener("click", () => {
-                    deleteItem(item._id, item.item_name, deleteButton);
-                });
-
-                actionCell.appendChild(deleteButton);
-
-                row.appendChild(actionCell);
-
-                itemsTableBody.appendChild(row);
-
-            });
-
-        }
-
-        // SEARCH AND FILTER EVENTS
-        searchInput.addEventListener("input", displayItems);
-        categoryFilter.addEventListener("change", displayItems);
-        statusFilter.addEventListener("change", displayItems);
-
-        // CLEAR FILTERS
-        document.getElementById("clearFilters").addEventListener("click", () => {
-
-            searchInput.value = "";
-            categoryFilter.value = "";
-            statusFilter.value = "";
-
+            updateInventorySummary();
             displayItems();
 
+        } catch (error) {
+
+            console.error(error);
+
+            itemsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-danger">
+                        Unable to load inventory.
+                    </td>
+                </tr>
+            `;
+
+            resultCount.textContent = "Unable to load inventory.";
+
+            document.getElementById("lowStockAlertList").innerHTML =
+                '<p class="text-danger mb-0">Unable to load stock alerts.</p>';
+
+        }
+    }
+
+    // GET STOCK STATUS
+    function getItemStatus(item) {
+
+        const availableQuantity = Number(item.available_quantity);
+
+        if (availableQuantity === 0) {
+            return "Unavailable";
+        }
+
+        if (availableQuantity <= 3) {
+            return "Low Stock";
+        }
+
+        return "Available";
+    }
+
+    // UPDATE INVENTORY SUMMARY AND LOW-STOCK ALERTS
+    function updateInventorySummary() {
+
+        const total = allItems.length;
+
+        const available = allItems.filter(item =>
+            getItemStatus(item) === "Available"
+        ).length;
+
+        const lowStock = allItems.filter(item =>
+            getItemStatus(item) === "Low Stock"
+        );
+
+        const unavailable = allItems.filter(item =>
+            getItemStatus(item) === "Unavailable"
+        ).length;
+
+        document.getElementById("totalItems").textContent = total;
+        document.getElementById("availableItems").textContent = available;
+        document.getElementById("lowStockItems").textContent = lowStock.length;
+        document.getElementById("unavailableItems").textContent = unavailable;
+
+        document.getElementById("lowStockAlertCount").textContent =
+            `${lowStock.length} Alert${lowStock.length !== 1 ? "s" : ""}`;
+
+        const alertList = document.getElementById("lowStockAlertList");
+
+        alertList.innerHTML = "";
+
+        if (lowStock.length === 0) {
+
+            alertList.innerHTML = `
+                <div class="text-success">
+                    <strong>All good!</strong>
+                    <p class="mb-0">There are currently no low-stock items.</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        lowStock.forEach(item => {
+
+            const alertItem = document.createElement("div");
+
+            alertItem.className =
+                "alert-item d-flex justify-content-between align-items-center flex-wrap gap-2";
+
+            const itemInfo = document.createElement("div");
+
+            const itemName = document.createElement("strong");
+            itemName.textContent = item.item_name;
+
+            const category = document.createElement("div");
+            category.className = "text-muted small";
+            category.textContent = item.category;
+
+            itemInfo.appendChild(itemName);
+            itemInfo.appendChild(category);
+
+            const quantityBadge = document.createElement("span");
+            quantityBadge.className = "badge bg-warning text-dark";
+            quantityBadge.textContent =
+                `${Number(item.available_quantity)} remaining`;
+
+            alertItem.appendChild(itemInfo);
+            alertItem.appendChild(quantityBadge);
+
+            alertList.appendChild(alertItem);
+
         });
 
-        // ADD NEW ITEM
-        addItemForm.addEventListener("submit", async function(event) {
+    }
 
-            event.preventDefault();
+    // DISPLAY AND FILTER ITEMS
+    function displayItems() {
 
-            const itemName = document.getElementById("item_name").value.trim();
-            const category = document.getElementById("category").value;
-            const quantity = Number(document.getElementById("quantity").value);
+        const searchValue = searchInput.value.toLowerCase().trim();
+        const selectedCategory = categoryFilter.value;
+        const selectedStatus = statusFilter.value;
 
-            if (!itemName || !category ||
-                !Number.isInteger(quantity) || quantity < 0) {
+        const filteredItems = allItems.filter(item => {
 
-                alert("Please enter valid item information.");
-                return;
-            }
+            const matchesSearch = String(item.item_name || "")
+                .toLowerCase()
+                .includes(searchValue);
 
-            const newItem = {
-                item_name: itemName,
-                category: category,
-                quantity: quantity,
-                available_quantity: quantity,
-                status: quantity > 0 ? "Available" : "Unavailable"
-            };
+            const matchesCategory =
+                !selectedCategory ||
+                item.category === selectedCategory;
 
-            try {
+            const matchesStatus =
+                !selectedStatus ||
+                getItemStatus(item) === selectedStatus;
 
-                saveItemButton.disabled = true;
-                saveItemButton.textContent = "Saving...";
-
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(newItem)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || "Failed to save item.");
-                }
-
-                alert("Inventory item successfully saved!");
-
-                addItemForm.reset();
-
-                bootstrap.Modal.getOrCreateInstance(
-                    document.getElementById("addItemModal")
-                ).hide();
-
-                await loadItems();
-
-            } catch (error) {
-
-                console.error(error);
-                alert(error.message);
-
-            } finally {
-
-                saveItemButton.disabled = false;
-                saveItemButton.textContent = "Save Item";
-
-            }
+            return matchesSearch && matchesCategory && matchesStatus;
 
         });
 
-        // OPEN EDIT MODAL
-        function openEditModal(item) {
+        itemsTableBody.innerHTML = "";
 
-            document.getElementById("editItemId").value = item._id;
+        resultCount.textContent =
+            `Showing ${filteredItems.length} of ${allItems.length} inventory items`;
 
-            document.getElementById("edit_item_name").value =
-                item.item_name;
+        if (filteredItems.length === 0) {
 
-            document.getElementById("edit_category").value =
-                item.category;
+            itemsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted">
+                        No matching inventory items found.
+                    </td>
+                </tr>
+            `;
 
-            document.getElementById("edit_quantity").value =
-                item.quantity;
+            return;
+        }
+
+        filteredItems.forEach(item => {
+
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.item_name;
+            row.appendChild(nameCell);
+
+            const categoryCell = document.createElement("td");
+            categoryCell.textContent = item.category;
+            row.appendChild(categoryCell);
+
+            const quantityCell = document.createElement("td");
+            quantityCell.textContent = item.quantity;
+            row.appendChild(quantityCell);
+
+            const availableCell = document.createElement("td");
+            availableCell.textContent = item.available_quantity;
+            row.appendChild(availableCell);
+
+            const statusCell = document.createElement("td");
+            const statusBadge = document.createElement("span");
+
+            const status = getItemStatus(item);
+
+            statusBadge.textContent = status;
+
+            if (status === "Available") {
+                statusBadge.className = "status-available";
+            } else if (status === "Low Stock") {
+                statusBadge.className = "status-low";
+            } else {
+                statusBadge.className = "status-unavailable";
+            }
+
+            statusCell.appendChild(statusBadge);
+            row.appendChild(statusCell);
+
+            const actionCell = document.createElement("td");
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.className = "btn btn-warning btn-sm me-2";
+
+            editButton.addEventListener("click", () => {
+                openEditModal(item);
+            });
+
+            actionCell.appendChild(editButton);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "btn btn-danger btn-sm";
+
+            deleteButton.addEventListener("click", () => {
+                deleteItem(item._id, item.item_name, deleteButton);
+            });
+
+            actionCell.appendChild(deleteButton);
+
+            row.appendChild(actionCell);
+
+            itemsTableBody.appendChild(row);
+
+        });
+
+    }
+
+    // SEARCH AND FILTER EVENTS
+    searchInput.addEventListener("input", displayItems);
+    categoryFilter.addEventListener("change", displayItems);
+    statusFilter.addEventListener("change", displayItems);
+
+    // CLEAR FILTERS
+    document.getElementById("clearFilters").addEventListener("click", () => {
+
+        searchInput.value = "";
+        categoryFilter.value = "";
+        statusFilter.value = "";
+
+        displayItems();
+
+    });
+
+    // ADD NEW ITEM
+    addItemForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const itemName = document.getElementById("item_name").value.trim();
+        const category = document.getElementById("category").value;
+        const quantity = Number(document.getElementById("quantity").value);
+
+        if (!itemName || !category ||
+            !Number.isInteger(quantity) || quantity < 0) {
+
+            alert("Please enter valid item information.");
+            return;
+        }
+
+        const newItem = {
+            item_name: itemName,
+            category: category,
+            quantity: quantity,
+            available_quantity: quantity,
+            status: quantity > 0 ? "Available" : "Unavailable"
+        };
+
+        try {
+
+            saveItemButton.disabled = true;
+            saveItemButton.textContent = "Saving...";
+
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newItem)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to save item.");
+            }
+
+            alert("Inventory item successfully saved!");
+
+            addItemForm.reset();
+
+            bootstrap.Modal.getOrCreateInstance(
+                document.getElementById("addItemModal")
+            ).hide();
+
+            await loadItems();
+
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message);
+
+        } finally {
+
+            saveItemButton.disabled = false;
+            saveItemButton.textContent = "Save Item";
+
+        }
+
+    });
+
+    // OPEN EDIT MODAL
+    function openEditModal(item) {
+
+        document.getElementById("editItemId").value = item._id;
+
+        document.getElementById("edit_item_name").value =
+            item.item_name;
+
+        document.getElementById("edit_category").value =
+            item.category;
+
+        document.getElementById("edit_quantity").value =
+            item.quantity;
+
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById("editItemModal")
+        ).show();
+
+    }
+
+    // UPDATE ITEM
+    editItemForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id = document.getElementById("editItemId").value;
+
+        const itemName = document.getElementById("edit_item_name").value.trim();
+        const category = document.getElementById("edit_category").value;
+        const quantity = Number(document.getElementById("edit_quantity").value);
+
+        if (!itemName || !category ||
+            !Number.isInteger(quantity) || quantity < 0) {
+
+            alert("Please enter valid item information.");
+            return;
+        }
+
+        const updatedItem = {
+            item_name: itemName,
+            category: category,
+            quantity: quantity
+        };
+
+        try {
+
+            updateItemButton.disabled = true;
+            updateItemButton.textContent = "Updating...";
+
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedItem)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to update item.");
+            }
+
+            alert("Inventory item updated successfully!");
 
             bootstrap.Modal.getOrCreateInstance(
                 document.getElementById("editItemModal")
-            ).show();
+            ).hide();
+
+            await loadItems();
+
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message);
+
+        } finally {
+
+            updateItemButton.disabled = false;
+            updateItemButton.textContent = "Update Item";
 
         }
 
-        // UPDATE ITEM
-        editItemForm.addEventListener("submit", async function(event) {
+    });
 
+    // DELETE ITEM
+    async function deleteItem(id, itemName, button) {
+
+        const confirmDelete = confirm(
+            `Are you sure you want to delete "${itemName}"?`
+        );
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+
+            button.disabled = true;
+            button.textContent = "Deleting...";
+
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to delete item.");
+            }
+
+            alert("Item deleted successfully!");
+
+            await loadItems();
+
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message);
+
+            button.disabled = false;
+            button.textContent = "Delete";
+
+        }
+
+    }
+
+    // LOGOUT
+    function logout(event) {
+
+        if (event) {
             event.preventDefault();
-
-            const id = document.getElementById("editItemId").value;
-
-            const itemName = document.getElementById("edit_item_name").value.trim();
-            const category = document.getElementById("edit_category").value;
-            const quantity = Number(document.getElementById("edit_quantity").value);
-
-            if (!itemName || !category ||
-                !Number.isInteger(quantity) || quantity < 0) {
-
-                alert("Please enter valid item information.");
-                return;
-            }
-
-            const updatedItem = {
-                item_name: itemName,
-                category: category,
-                quantity: quantity
-            };
-
-            try {
-
-                updateItemButton.disabled = true;
-                updateItemButton.textContent = "Updating...";
-
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(updatedItem)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || "Failed to update item.");
-                }
-
-                alert("Inventory item updated successfully!");
-
-                bootstrap.Modal.getOrCreateInstance(
-                    document.getElementById("editItemModal")
-                ).hide();
-
-                await loadItems();
-
-            } catch (error) {
-
-                console.error(error);
-                alert(error.message);
-
-            } finally {
-
-                updateItemButton.disabled = false;
-                updateItemButton.textContent = "Update Item";
-
-            }
-
-        });
-
-        // DELETE ITEM
-        async function deleteItem(id, itemName, button) {
-
-            const confirmDelete = confirm(
-                `Are you sure you want to delete "${itemName}"?`
-            );
-
-            if (!confirmDelete) {
-                return;
-            }
-
-            try {
-
-                button.disabled = true;
-                button.textContent = "Deleting...";
-
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: "DELETE"
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || "Failed to delete item.");
-                }
-
-                alert("Item deleted successfully!");
-
-                await loadItems();
-
-            } catch (error) {
-
-                console.error(error);
-                alert(error.message);
-
-                button.disabled = false;
-                button.textContent = "Delete";
-
-            }
-
         }
 
-        // LOAD INVENTORY WHEN PAGE OPENS
-        loadItems();
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
 
-    </script>
+        window.location.replace("/login.html");
+
+    }
+
+    // LOAD INVENTORY WHEN PAGE OPENS
+    loadItems();
+
+</script>
 
 </body>
 </html>

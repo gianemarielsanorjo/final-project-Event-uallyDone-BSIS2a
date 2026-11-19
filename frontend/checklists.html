@@ -10,32 +10,68 @@
 
     <style>
         body {
-            background-color: #f4f7fb;
+            background-color: #F3F5F8;
             font-family: Arial, sans-serif;
+            color: #212529;
+            margin: 0;
         }
 
-        .navbar {
-            background-color: #173b70;
+        .sidebar {
+            background-color: #203F65;
+            color: white;
+            min-height: 100vh;
+            padding: 25px 15px;
         }
 
-        .navbar-brand, .nav-link {
-            color: white !important;
+        .sidebar h4 {
+            color: #FFFFFF;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
         }
 
-        .page-header, .content-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 8px;
         }
 
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #162F4D;
+            color: #FFFFFF;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .main-content h2,
+        .main-content h4 {
+            color: #203F65;
+            font-weight: bold;
+        }
+
+        .page-header,
         .content-card {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background-color: #FFFFFF;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         }
 
         .btn-primary {
-            background-color: #245ca6;
-            border: none;
+            background-color: #203F65;
+            border-color: #203F65;
+        }
+
+        .btn-primary:hover {
+            background-color: #162F4D;
+            border-color: #162F4D;
         }
 
         .task-item {
@@ -50,107 +86,129 @@
         .progress {
             height: 10px;
         }
+
+        .form-check-input:checked {
+            background-color: #203F65;
+            border-color: #203F65;
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                min-height: auto;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="dashboard.html">
-            EVENT-UALLY DONE
-        </a>
+<div class="container-fluid">
+    <div class="row">
 
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
-            <a class="nav-link" href="items.html">Inventory</a>
-            <a class="nav-link" href="reservations.html">Reservations</a>
-            <a class="nav-link active" href="checklists.html">Checklists</a>
-            <a class="nav-link" href="profile.html">Profile</a>
-        </div>
-    </div>
-</nav>
+        <!-- SIDEBAR -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4>EVENT-UALLY DONE</h4>
 
-<div class="container py-4">
-
-    <div class="page-header">
-        <h2 class="fw-bold">Event Checklists</h2>
-        <p class="text-muted mb-0">
-            Organize and monitor tasks before, during, and after school events.
-        </p>
-    </div>
-
-    <div class="content-card">
-
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-            <h5 class="fw-bold mb-0">Event Preparation Tasks</h5>
-
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-                + Add New Task
-            </button>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/items.html">Inventory</a>
+            <a href="/reservations.html">Reservations</a>
+            <a href="/checklists.html" class="active">Checklists</a>
+            <a href="#" onclick="logout(event)">Logout</a>
         </div>
 
-        <div class="mb-4">
-            <div class="d-flex justify-content-between mb-2">
-                <span class="fw-bold">Overall Progress</span>
-                <span id="progressText">2 of 5 completed (40%)</span>
+        <!-- MAIN CONTENT -->
+        <div class="col-md-9 col-lg-10 main-content">
+
+            <div class="page-header">
+                <h2>Event Checklists</h2>
+                <p class="text-muted mb-0">
+                    Organize and monitor tasks before, during, and after school events.
+                </p>
             </div>
 
-            <div class="progress">
-                <div id="progressBar" class="progress-bar bg-primary"
-                    role="progressbar" style="width: 40%">
+            <div class="content-card">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                    <h5 class="fw-bold mb-0">Event Preparation Tasks</h5>
+
+                    <button class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addTaskModal">
+                        + Add New Task
+                    </button>
+                </div>
+
+                <!-- PROGRESS -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold">Overall Progress</span>
+                        <span id="progressText">2 of 5 completed (40%)</span>
+                    </div>
+
+                    <div class="progress">
+                        <div id="progressBar"
+                            class="progress-bar"
+                            role="progressbar"
+                            style="width: 40%">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASK LIST -->
+                <div id="taskList">
+
+                    <div class="task-item d-flex align-items-center gap-3">
+                        <input type="checkbox" class="form-check-input task-check" checked>
+                        <div>
+                            <h6 class="mb-1">Prepare event equipment</h6>
+                            <small class="text-muted">Inventory Team</small>
+                        </div>
+                    </div>
+
+                    <div class="task-item d-flex align-items-center gap-3">
+                        <input type="checkbox" class="form-check-input task-check" checked>
+                        <div>
+                            <h6 class="mb-1">Reserve venue</h6>
+                            <small class="text-muted">Event Organizer</small>
+                        </div>
+                    </div>
+
+                    <div class="task-item d-flex align-items-center gap-3">
+                        <input type="checkbox" class="form-check-input task-check">
+                        <div>
+                            <h6 class="mb-1">Check sound system and projector</h6>
+                            <small class="text-muted">Technical Team</small>
+                        </div>
+                    </div>
+
+                    <div class="task-item d-flex align-items-center gap-3">
+                        <input type="checkbox" class="form-check-input task-check">
+                        <div>
+                            <h6 class="mb-1">Arrange chairs and tables</h6>
+                            <small class="text-muted">Logistics Team</small>
+                        </div>
+                    </div>
+
+                    <div class="task-item d-flex align-items-center gap-3">
+                        <input type="checkbox" class="form-check-input task-check">
+                        <div>
+                            <h6 class="mb-1">Final event inspection</h6>
+                            <small class="text-muted">Event Organizer</small>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
         </div>
-
-        <div id="taskList">
-
-            <div class="task-item d-flex align-items-center gap-3">
-                <input type="checkbox" class="form-check-input task-check" checked>
-                <div>
-                    <h6 class="mb-1">Prepare event equipment</h6>
-                    <small class="text-muted">Inventory Team</small>
-                </div>
-            </div>
-
-            <div class="task-item d-flex align-items-center gap-3">
-                <input type="checkbox" class="form-check-input task-check" checked>
-                <div>
-                    <h6 class="mb-1">Reserve venue</h6>
-                    <small class="text-muted">Event Organizer</small>
-                </div>
-            </div>
-
-            <div class="task-item d-flex align-items-center gap-3">
-                <input type="checkbox" class="form-check-input task-check">
-                <div>
-                    <h6 class="mb-1">Check sound system and projector</h6>
-                    <small class="text-muted">Technical Team</small>
-                </div>
-            </div>
-
-            <div class="task-item d-flex align-items-center gap-3">
-                <input type="checkbox" class="form-check-input task-check">
-                <div>
-                    <h6 class="mb-1">Arrange chairs and tables</h6>
-                    <small class="text-muted">Logistics Team</small>
-                </div>
-            </div>
-
-            <div class="task-item d-flex align-items-center gap-3">
-                <input type="checkbox" class="form-check-input task-check">
-                <div>
-                    <h6 class="mb-1">Final event inspection</h6>
-                    <small class="text-muted">Event Organizer</small>
-                </div>
-            </div>
-
-        </div>
-
     </div>
 </div>
 
-<!-- Add Task Modal -->
+<!-- ADD TASK MODAL -->
 <div class="modal fade" id="addTaskModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -191,23 +249,29 @@
     const progressBar = document.getElementById("progressBar");
     const progressText = document.getElementById("progressText");
 
+    // UPDATE PROGRESS
     function updateProgress() {
         const checkboxes = document.querySelectorAll(".task-check");
         const completed = document.querySelectorAll(".task-check:checked").length;
         const total = checkboxes.length;
 
-        const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+        const percentage = total === 0
+            ? 0
+            : Math.round((completed / total) * 100);
 
         progressBar.style.width = percentage + "%";
-        progressText.textContent = `${completed} of ${total} completed (${percentage}%)`;
+        progressText.textContent =
+            `${completed} of ${total} completed (${percentage}%)`;
     }
 
+    // CHECK TASK
     taskList.addEventListener("change", function(event) {
         if (event.target.classList.contains("task-check")) {
             updateProgress();
         }
     });
 
+    // ADD NEW TASK
     document.getElementById("taskForm").addEventListener("submit", function(event) {
         event.preventDefault();
 
@@ -250,8 +314,20 @@
         ).hide();
     });
 
+    // LOGOUT
+    function logout(event) {
+        event.preventDefault();
+
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+
+        window.location.replace("/login.html");
+    }
+
+    // INITIAL PROGRESS
     updateProgress();
 </script>
 
 </body>
 </html>
+

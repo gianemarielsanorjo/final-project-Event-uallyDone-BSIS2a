@@ -1,4 +1,5 @@
 
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -27,14 +28,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// STATIC FILES
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "../frontend")));
+// MAIN HOMEPAGE - OPEN ACTUAL LOGIN PAGE
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/login.html"));
+});
 
-// OPEN THE FRONTEND DASHBOARD
+// INDEX PAGE - REDIRECT TO ACTUAL LOGIN PAGE
+app.get("/index.html", (req, res) => {
+    res.redirect("/login.html");
+});
+
+// DASHBOARD PAGE
 app.get("/dashboard", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/dashboard.html"));
 });
+
+// STATIC FILES
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // API ROUTES
 app.use("/api/users", userRoutes);
@@ -59,6 +70,7 @@ app.get("/api/orders-list", async (req, res) => {
             .populate("items", "item_name category");
 
         res.status(200).json(orders);
+
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -77,6 +89,7 @@ async function start() {
             console.log(`Server running on port ${PORT}`);
             console.log("EVENT-UALLY DONE API is ready!");
         });
+
     } catch (error) {
         console.error("Server startup failed:", error.message);
         process.exit(1);
@@ -84,5 +97,3 @@ async function start() {
 }
 
 start();
-
-

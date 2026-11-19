@@ -57,6 +57,20 @@
 
         .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+        }
+
+        .feature-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .feature-link:focus-visible {
+            outline: 3px solid #527da8;
+            outline-offset: 4px;
+            border-radius: 12px;
         }
 
         footer {
@@ -80,7 +94,10 @@
 
             <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -89,9 +106,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="index.html">Home</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="#features">Features</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="login.html">Login</a>
                     </li>
@@ -138,40 +157,70 @@
 
             <div class="row g-4">
 
+                <!-- INVENTORY MANAGEMENT -->
                 <div class="col-md-4">
-                    <div class="card feature-card shadow-sm p-4">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Inventory Management</h5>
-                            <p class="text-muted">
-                                Organize and monitor event materials
-                                and equipment.
-                            </p>
+                    <a href="items.html" class="feature-link">
+                        <div class="card feature-card shadow-sm p-4">
+                            <div class="card-body text-center">
+                                <h5 class="fw-bold">
+                                    Inventory Management
+                                </h5>
+
+                                <p class="text-muted">
+                                    Organize and monitor event materials
+                                    and equipment.
+                                </p>
+
+                                <span class="text-primary fw-bold">
+                                    Explore Feature →
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
+                <!-- RESERVATIONS -->
                 <div class="col-md-4">
-                    <div class="card feature-card shadow-sm p-4">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Reservations</h5>
-                            <p class="text-muted">
-                                Request and manage equipment
-                                reservations for events.
-                            </p>
+                    <a href="reservations.html" class="feature-link">
+                        <div class="card feature-card shadow-sm p-4">
+                            <div class="card-body text-center">
+                                <h5 class="fw-bold">
+                                    Reservations
+                                </h5>
+
+                                <p class="text-muted">
+                                    Request and manage equipment
+                                    reservations for events.
+                                </p>
+
+                                <span class="text-primary fw-bold">
+                                    Explore Feature →
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
+                <!-- EVENT CHECKLISTS -->
                 <div class="col-md-4">
-                    <div class="card feature-card shadow-sm p-4">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Event Checklists</h5>
-                            <p class="text-muted">
-                                Keep track of materials needed
-                                for event preparation.
-                            </p>
+                    <a href="checklists.html" class="feature-link">
+                        <div class="card feature-card shadow-sm p-4">
+                            <div class="card-body text-center">
+                                <h5 class="fw-bold">
+                                    Event Checklists
+                                </h5>
+
+                                <p class="text-muted">
+                                    Keep track of materials needed
+                                    for event preparation.
+                                </p>
+
+                                <span class="text-primary fw-bold">
+                                    Explore Feature →
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
             </div>
