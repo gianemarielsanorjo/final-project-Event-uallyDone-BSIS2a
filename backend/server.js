@@ -1,5 +1,4 @@
 
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -62,6 +61,14 @@ app.get("/api/health", (req, res) => {
     });
 });
 
+// SYSTEM STATUS - WEEK 12 LAB CHALLENGE
+app.get("/status", (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        message: "System is running"
+    });
+});
+
 // ORDERS LIST WITH POPULATED DATA
 app.get("/api/orders-list", async (req, res) => {
     try {
@@ -97,3 +104,4 @@ async function start() {
 }
 
 start();
+
