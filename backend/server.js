@@ -3,6 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const xss = require("xss");
 
 dotenv.config();
 
@@ -22,17 +25,75 @@ const reservationRoutes = require("./routes/reservations");
 // INITIALIZE EXPRESS
 const app = express();
 
+// SECURITY HEADERS
+app.use(helmet());
+
 // MIDDLEWARE
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MAIN HOMEPAGE - OPEN ACTUAL LOGIN PAGE
+// XSS INPUT SANITIZATION
+function sanitizeValue(value, key = "") {
+    if (typeof value === "string") {
+        // Do not modify passwords
+        if (
+            key.toLowerCase() === "password" ||
+            key.toLowerCase() === "confirmpassword"
+        ) {
+            return value;
+        }
+
+        return xss(value);
+    }
+
+    if (Array.isArray(value)) {
+        return value.map(item => sanitizeValue(item, key));
+    }
+
+    if (value !== null && typeof value === "object") {
+        const sanitized = {};
+
+        for (const property in value) {
+            sanitized[property] = sanitizeValue(
+                value[property],
+                property
+            );
+        }
+
+        return sanitized;
+    }
+
+    return value;
+}
+
+app.use((req, res, next) => {
+    if (req.body && typeof req.body === "object") {
+        req.body = sanitizeValue(req.body);
+    }
+
+    next();
+});
+
+// LOGIN RATE LIMITER
+const loginLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 5,
+    message: {
+        message: "Too many requests, try again later"
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+app.use("/api/auth/login", loginLimiter);
+
+// MAIN HOMEPAGE
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-// INDEX PAGE - REDIRECT TO ACTUAL LOGIN PAGE
+// INDEX PAGE
 app.get("/index.html", (req, res) => {
     res.redirect("/login.html");
 });
@@ -61,7 +122,7 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-// SYSTEM STATUS - WEEK 12 LAB CHALLENGE
+// SYSTEM STATUS
 app.get("/status", (req, res) => {
     res.status(200).json({
         status: "OK",
@@ -104,4 +165,3 @@ async function start() {
 }
 
 start();
-

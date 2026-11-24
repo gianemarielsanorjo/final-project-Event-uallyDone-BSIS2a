@@ -1,6 +1,10 @@
+
 console.log("AUTH ROUTES FILE LOADED");
+
 const express = require("express");
 const router = express.Router();
+
+const { body, validationResult } = require("express-validator");
 
 const {
     register,
@@ -12,27 +16,92 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
-// Register
-router.post("/register", register);
+// VALIDATION ERROR HANDLER
+const checkValidation = (req, res, next) => {
+    const errors = validationResult(req);
 
-// Login
-router.post("/login", login);
-
-// Protected profile route
-router.get(
-    "/profile",
-    protect,
-    (req, res) => {
-        console.log("PROFILE ROUTE HIT");
-        
-        res.status(200).json({
-            message: "Profile access granted!",
-            user: req.user
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
         });
     }
+
+    next();
+};
+
+// REGISTER VALIDATION
+const registerValidation = [
+    body("full_name")
+        .trim()
+        .notEmpty()
+        .withMessage("Full name is required."),
+
+    body("email")
+        .trim()
+        .isEmail()
+        .withMessage("Please enter a valid email address."),
+
+    body("password")
+        .isLength({ min: 6 })
+        .withMessage("Password must be at least 6 characters.")
+        .matches(/[A-Z]/)
+        .withMessage("Password must include an uppercase letter.")
+        .matches(/[0-9]/)
+        .withMessage("Password must include a number."),
+
+    body("confirmPassword")
+        .notEmpty()
+        .withMessage("Please confirm your password.")
+        .custom((value, { req }) => value === req.body.password)
+        .withMessage("Passwords do not match.")
+];
+
+// LOGIN VALIDATION
+const loginValidation = [
+    body("email")
+        .trim()
+        .isEmail()
+        .withMessage("Please enter a valid email address."),
+
+    body("password")
+        .notEmpty()
+        .withMessage("Password is required.")
+];
+
+// REGISTER
+router.post(
+    "/register",
+    registerValidation,
+    checkValidation,
+    register
 );
 
-// Admin-only route
+// LOGIN
+router.post(
+    "/login",
+    loginValidation,
+    checkValidation,
+    login
+);
+
+// PROTECTED PROFILE ROUTE
+router.get("/profile", protect, (req, res) => {
+    res.status(200).json({
+        message: "Profile access granted!",
+        user: req.user
+    });
+});
+
+// NEW SECURE DATA ROUTE
+router.get("/secure-data", protect, (req, res) => {
+    res.status(200).json({
+        message: "Secure data access granted!",
+        user: req.user.full_name,
+        data: "This information is available only to authenticated users."
+    });
+});
+
+// ADMIN-ONLY ROUTE
 router.get(
     "/admin",
     protect,
