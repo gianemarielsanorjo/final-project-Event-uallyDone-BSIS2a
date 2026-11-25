@@ -1,0 +1,51 @@
+
+const API_URL = "/api/items";
+
+// 1. Fetch inventory data from the backend API
+async function loadItems() {
+    const response = await fetch(API_URL);
+
+    // 2. Convert the API response into JSON
+    const data = await response.json();
+
+    // 3. Store the retrieved inventory records
+    allItems = data;
+
+    // 4. Update summary cards and display inventory
+    updateInventorySummary();
+    displayItems();
+}
+
+// 5. Filter inventory using search, category, and status
+function displayItems() {
+    const searchValue = searchInput.value.trim().toLowerCase();
+    const selectedCategory = categoryFilter.value;
+    const selectedStatus = statusFilter.value;
+
+    const filteredItems = allItems.filter(item => {
+        const matchesSearch = String(item.item_name ?? "")
+            .toLowerCase().includes(searchValue);
+
+        const matchesCategory =
+            !selectedCategory || item.category === selectedCategory;
+
+        const matchesStatus =
+            !selectedStatus || getItemStatus(item) === selectedStatus;
+
+        return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    // 6. Render inventory records into the HTML table
+    itemsTableBody.innerHTML = filteredItems.map(item => `
+        <tr>
+            <td>${escapeHTML(item.item_name)}</td>
+            <td>${escapeHTML(item.category)}</td>
+            <td>${Number(item.quantity ?? 0)}</td>
+            <td>${getAvailableQuantity(item)}</td>
+            <td>${getStatusBadge(getItemStatus(item))}</td>
+        </tr>
+    `).join("");
+}
+
+// 7. Load inventory when the page opens
+loadItems();
