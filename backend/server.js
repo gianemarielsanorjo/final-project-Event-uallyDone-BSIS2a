@@ -26,7 +26,18 @@ const reservationRoutes = require("./routes/reservations");
 const app = express();
 
 // SECURITY HEADERS
-app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                "script-src": [
+                    "'self'",
+                    "https://cdn.jsdelivr.net"
+                ]
+            }
+        }
+    })
+);
 
 // MIDDLEWARE
 app.use(cors());
