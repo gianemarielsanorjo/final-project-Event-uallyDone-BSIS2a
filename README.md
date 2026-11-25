@@ -13,6 +13,8 @@ The system provides a centralized platform for managing inventory, handling rese
 - User registration
 - User login
 - User profile page
+- Role-based access control
+- Password validation and security
 
 ### 2. Dashboard
 - Displays inventory information
@@ -20,11 +22,14 @@ The system provides a centralized platform for managing inventory, handling rese
 - Provides an overview of system activities
 
 ### 3. Inventory Management
-- View available inventory items
+- View inventory items dynamically from the backend
 - Add new inventory items
 - Edit existing inventory information
 - Delete inventory items
 - Monitor item quantities and availability
+- Search inventory records
+- Filter items by category and status
+- Display inventory summary cards
 
 ### 4. Reservation Management
 - Create new reservations
@@ -38,12 +43,34 @@ The system provides a centralized platform for managing inventory, handling rese
 - View event checklist items
 - Mark checklist tasks as completed
 
+### 6. Product Management
+- Add and retrieve product records
+- Store product names, prices, and descriptions
+
+### 7. Data Retrieval and Display (Phase 5)
+- Retrieve backend records using JavaScript Fetch API
+- Display inventory data dynamically on the frontend
+- Use DOM manipulation to update displayed records
+- Implement search and filtering functionality
+- Connect frontend pages to backend API endpoints
+- Support inventory CRUD operations through API requests
+
+### 8. Web Security
+- Input validation
+- XSS prevention and sanitization
+- Password validation
+- Helmet security headers
+- Login rate limiting
+- Protected routes using authentication middleware
+
 ## Frontend Technologies
 
 - HTML5
 - CSS3
 - Bootstrap 5
 - JavaScript
+- Fetch API
+- DOM Manipulation
 
 ## Backend Technologies
 
@@ -51,6 +78,24 @@ The system provides a centralized platform for managing inventory, handling rese
 - Express.js
 - MongoDB
 - Mongoose
+- JSON Web Token (JWT)
+- Express Validator
+- Helmet
+- Express Rate Limit
+- XSS
+
+## API Endpoints
+
+The following GET endpoints were tested and returned JSON responses:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/users` | Retrieves user records |
+| GET | `/api/products` | Retrieves product records |
+| GET | `/api/orders` | Retrieves order records |
+| GET | `/api/items` | Retrieves inventory records |
+
+Other API operations support user authentication, inventory management, reservations, and product management.
 
 ## Project Structure
 
@@ -59,11 +104,12 @@ EVENTUALLY-DONE-LOCAL/
 ├── backend/
 │   ├── config/
 │   ├── controllers/
+│   ├── middleware/
 │   ├── models/
 │   ├── routes/
 │   ├── public/
-│   │   └── css/
-│   └── server.js
+│   ├── server.js
+│   └── package.json
 ├── frontend/
 │   ├── index.html
 │   ├── login.html
@@ -71,8 +117,11 @@ EVENTUALLY-DONE-LOCAL/
 │   ├── dashboard.html
 │   ├── profile.html
 │   ├── items.html
+│   ├── add-product.html
 │   ├── reservations.html
-│   └── checklists.html
+│   ├── checklists.html
+│   └── js/
+│       └── items.js
 ├── database/
 ├── docs/
 ├── README.md
@@ -89,8 +138,6 @@ The implemented frontend pages support the planned user interactions of EVENT-UA
 - Users can submit and view equipment reservations.
 - Users can monitor event checklist tasks.
 
-The pages and interactions are designed to support the system's planned functions and user workflows.
-
 ## Alignment with the Entity Relationship Diagram (ERD)
 
 The frontend forms and displayed information correspond to the system's data entities:
@@ -98,6 +145,8 @@ The frontend forms and displayed information correspond to the system's data ent
 - **User:** Account registration, login, and profile information.
 - **Item:** Item name, category, quantity, available quantity, and status.
 - **Reservation:** Event name, selected item, quantity, event date, description, and reservation status.
+- **Product:** Product name, price, description, and creator.
+- **Order:** User reference, ordered items, quantities, and total amount.
 - **Checklist:** Event-related tasks and completion status.
 
 ## How to Run the Project
@@ -132,8 +181,9 @@ The frontend forms and displayed information correspond to the system's data ent
 ## Project Information
 
 **Project Name:** EVENT-UALLY DONE  
+**Group Name:** Event Handlers  
 **Section:** BSIS 2A  
 **Project Type:** Web-Based Event Inventory and Reservation Management System  
-**Course:** Web Systems
+**Course:** IT 112 – Web Systems and Technologies
 
-Developed as part of the Web Systems course by BSIS 2A.
+Developed as part of the Web Systems and Technologies course by BSIS 2A.
