@@ -1,6 +1,7 @@
 
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const cache = require("../utils/cache");
 
 // CREATE USER
 exports.createUser = async (req, res) => {
@@ -22,6 +23,8 @@ exports.createUser = async (req, res) => {
             role
         });
 
+        cache.del("users");
+
         return res.status(201).json({
             message: "User created successfully",
             user: {
@@ -37,13 +40,24 @@ exports.createUser = async (req, res) => {
     }
 };
 
-// READ ALL USERS
+// READ ALL USERS WITH 30-SECOND CACHE
 exports.getUsers = async (req, res) => {
     try {
+        const cachedUsers = cache.get("users");
+
+        if (cachedUsers !== undefined) {
+            res.set("X-Cache", "HIT");
+            return res.json(cachedUsers);
+        }
+
         const users = await User.find()
             .select("-password")
-            .sort({ created_at: -1 });
+            .sort({ created_at: -1 })
+            .lean();
 
+        cache.set("users", users, 30);
+
+        res.set("X-Cache", "MISS");
         return res.json(users);
 
     } catch (err) {
@@ -55,7 +69,8 @@ exports.getUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
-            .select("-password");
+            .select("-password")
+            .lean();
 
         if (!user) {
             return res.status(404).json({
@@ -99,6 +114,8 @@ exports.updateUser = async (req, res) => {
             });
         }
 
+        cache.del("users");
+
         return res.json(updated);
 
     } catch (err) {
@@ -116,6 +133,8 @@ exports.deleteUser = async (req, res) => {
                 error: "User not found"
             });
         }
+
+        cache.del("users");
 
         return res.json({
             message: "User deleted successfully"

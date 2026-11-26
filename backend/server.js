@@ -44,6 +44,22 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// PERFORMANCE LOGGING MIDDLEWARE
+app.use((req, res, next) => {
+    const start = process.hrtime.bigint();
+
+    res.on("finish", () => {
+        const end = process.hrtime.bigint();
+        const duration = Number(end - start) / 1000000;
+
+        console.log(
+            `[PERFORMANCE] ${req.method} ${req.originalUrl} - ${duration.toFixed(2)} ms - Status: ${res.statusCode}`
+        );
+    });
+
+    next();
+});
+
 // XSS INPUT SANITIZATION
 function sanitizeValue(value, key = "") {
     if (typeof value === "string") {

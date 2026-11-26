@@ -2,22 +2,39 @@
 const express = require("express");
 const router = express.Router();
 const Item = require("../models/Item");
+const cache = require("../utils/cache");
 
 // Create item
 router.post("/", async (req, res) => {
     try {
         const item = await Item.create(req.body);
+
+        // Clear cached items after creating
+        cache.del("items");
+
         res.status(201).json(item);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-// Get all items
+// Get all items with caching
 router.get("/", async (req, res) => {
     try {
-        const items = await Item.find();
+        const cachedItems = cache.get("items");
+
+        if (cachedItems !== undefined) {
+            res.set("X-Cache", "HIT");
+            return res.json(cachedItems);
+        }
+
+        const items = await Item.find().lean();
+
+        cache.set("items", items);
+
+        res.set("X-Cache", "MISS");
         res.json(items);
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -55,6 +72,9 @@ router.put("/:id", async (req, res) => {
 
         await item.save();
 
+        // Clear cached items after updating
+        cache.del("items");
+
         res.json({
             message: "Item updated successfully!",
             item
@@ -68,7 +88,7 @@ router.put("/:id", async (req, res) => {
 // Get item by ID
 router.get("/:id", async (req, res) => {
     try {
-        const item = await Item.findById(req.params.id);
+        const item = await Item.findById(req.params.id).lean();
 
         if (!item) {
             return res.status(404).json({
@@ -92,6 +112,9 @@ router.delete("/:id", async (req, res) => {
                 message: "Item not found"
             });
         }
+
+        // Clear cached items after deleting
+        cache.del("items");
 
         res.json({
             message: "Item deleted successfully!",
