@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#203F65">
+
+    <title>Admin Dashboard | EVENT-UALLY DONE</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #203F65;
+            --navy-dark: #142B48;
+            --gold: #FFCA28;
+            --light-blue: #EAF1FA;
+            --text: #26364A;
+            --muted: #718096;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--light-blue);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--navy), var(--navy-dark));
+            color: white;
+            min-height: 100vh;
+            padding: 30px 18px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 800;
+            line-height: 1.4;
+            margin-bottom: 35px;
+            color: white;
+        }
+
+        .brand span {
+            color: var(--gold);
+        }
+
+        .sidebar-label {
+            color: #AFC1D8;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            margin: 25px 12px 12px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #E5EDF7;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            transition: .2s ease;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: var(--gold);
+            color: var(--navy-dark);
+            font-weight: bold;
+            transform: translateX(3px);
+        }
+
+        .sidebar a i {
+            font-size: 17px;
+        }
+
+        .admin-label {
+            background: rgba(255, 202, 40, .14);
+            color: var(--gold);
+            border: 1px solid rgba(255, 202, 40, .35);
+            padding: 7px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            padding: 32px;
+            min-width: 0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .topbar h5 {
+            color: var(--navy);
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .welcome {
+            background: linear-gradient(120deg, #203F65, #315D8D);
+            color: white;
+            padding: 32px;
+            border-radius: 18px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 22px rgba(32, 63, 101, .15);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 35px solid rgba(255, 255, 255, .07);
+            border-radius: 50%;
+            right: -55px;
+            top: -90px;
+        }
+
+        .welcome h2 {
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #E1EAF5;
+            margin-bottom: 18px;
+            max-width: 550px;
+        }
+
+        .welcome .welcome-icon {
+            font-size: 75px;
+            color: var(--gold);
+            opacity: .95;
+            position: absolute;
+            right: 55px;
+            bottom: 20px;
+        }
+
+        .section-title {
+            color: var(--navy);
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 23px;
+            border-radius: 15px;
+            height: 100%;
+            box-shadow: 0 4px 14px rgba(32, 63, 101, .06);
+            border: 1px solid #E6EDF5;
+            transition: .2s ease;
+        }
+
+        .stat-card:hover,
+        .management-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 22px rgba(32, 63, 101, .12);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 17px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            font-size: 22px;
+        }
+
+        .icon-blue {
+            background: #E7EFFB;
+            color: #245CA6;
+        }
+
+        .icon-gold {
+            background: #FFF5D6;
+            color: #A87900;
+        }
+
+        .icon-green {
+            background: #E2F5EA;
+            color: #198754;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .stat-number {
+            color: var(--navy);
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .stat-note {
+            color: #8996A8;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .management-card {
+            background: white;
+            padding: 24px;
+            border-radius: 15px;
+            height: 100%;
+            border: 1px solid #E6EDF5;
+            box-shadow: 0 4px 14px rgba(32, 63, 101, .06);
+            transition: .2s ease;
+        }
+
+        .management-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #EAF1FA;
+            color: var(--navy);
+            font-size: 23px;
+            margin-bottom: 18px;
+        }
+
+        .management-card h5 {
+            color: var(--navy);
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .management-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 42px;
+        }
+
+        .management-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--navy);
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .management-card a:hover {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .system-card {
+            background: white;
+            border: 1px solid #E6EDF5;
+            border-radius: 15px;
+            padding: 23px;
+            box-shadow: 0 4px 14px rgba(32, 63, 101, .05);
+        }
+
+        .system-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid #EDF1F6;
+            gap: 12px;
+        }
+
+        .system-row:last-child {
+            border-bottom: none;
+        }
+
+        .system-name {
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .system-status {
+            color: #198754;
+            background: #E2F5EA;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .footer {
+            color: #8794A5;
+            font-size: 12px;
+            text-align: center;
+            padding: 25px 0 5px;
+        }
+
+        .logout {
+            cursor: pointer;
+        }
+
+        #message {
+            display: none;
+        }
+
+        @media(max-width: 767px) {
+            .sidebar {
+                min-height: auto;
+                padding: 22px 18px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .welcome {
+                padding: 25px 22px;
+            }
+
+            .welcome .welcome-icon {
+                font-size: 45px;
+                right: 20px;
+                bottom: 15px;
+                opacity: .45;
+            }
+
+            .welcome h2 {
+                font-size: 23px;
+            }
+
+            .stat-number {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- SIDEBAR -->
+        <aside class="col-md-3 col-lg-2 sidebar">
+
+            <div class="brand">
+                EVENT-UALLY <span>DONE</span>
+            </div>
+
+            <span class="admin-label">
+                <i class="bi bi-shield-lock-fill"></i>
+                ADMINISTRATOR
+            </span>
+
+            <p class="sidebar-label">MAIN MENU</p>
+
+            <a href="/admin-dashboard.html" class="active">
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+
+            <a href="/items.html">
+                <i class="bi bi-box-seam"></i>
+                Inventory Management
+            </a>
+
+            <a href="/reservations.html">
+                <i class="bi bi-calendar-check"></i>
+                All Reservations
+            </a>
+
+            <a href="/checklists.html">
+                <i class="bi bi-clipboard-check"></i>
+                Event Checklists
+            </a>
+
+            <p class="sidebar-label">ACCOUNT</p>
+
+            <a href="/profile.html">
+                <i class="bi bi-person-circle"></i>
+                My Profile
+            </a>
+
+            <a href="/login.html" class="logout" id="logoutLink">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-9 col-lg-10 main-content">
+
+            <div class="topbar">
+                <div>
+                    <h5>Administration Overview</h5>
+                    <small class="text-muted">EVENT-UALLY DONE Management System</small>
+                </div>
+
+                <span class="admin-label">
+                    <i class="bi bi-shield-check"></i>
+                    ADMIN ACCESS
+                </span>
+            </div>
+
+            <!-- WELCOME -->
+            <section class="welcome">
+
+                <span class="badge mb-3" style="background:#FFCA28;color:#203F65;">
+                    ADMINISTRATOR PANEL
+                </span>
+
+                <h2>
+                    Welcome back, <span id="userName">Administrator</span>!
+                </h2>
+
+                <p>
+                    Manage your event inventory, monitor reservation requests,
+                    and oversee event preparation activities in one place.
+                </p>
+
+                <a href="/reservations.html"
+                   class="btn btn-sm fw-bold"
+                   style="background:#FFCA28;color:#203F65;">
+                    Review Reservations
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+                <i class="bi bi-buildings welcome-icon"></i>
+
+            </section>
+
+            <div id="message" class="alert alert-info"></div>
+
+            <!-- STATISTICS -->
+            <section class="mb-4">
+
+                <h4 class="section-title">
+                    <i class="bi bi-bar-chart-fill me-2"></i>
+                    System Overview
+                </h4>
+
+                <div class="row g-3">
+
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+                                <div>
+                                    <p class="stat-label">Total Inventory Items</p>
+                                    <h3 class="stat-number" id="totalItems">--</h3>
+                                </div>
+
+                                <div class="stat-icon icon-blue">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                            </div>
+
+                            <p class="stat-note mb-0">
+                                <i class="bi bi-database"></i>
+                                Inventory records
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+                                <div>
+                                    <p class="stat-label">Total Reservations</p>
+                                    <h3 class="stat-number" id="totalReservations">--</h3>
+                                </div>
+
+                                <div class="stat-icon icon-gold">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                            </div>
+
+                            <p class="stat-note mb-0">
+                                <i class="bi bi-clipboard-data"></i>
+                                Reservation records
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+                                <div>
+                                    <p class="stat-label">System Connection</p>
+                                    <h3 class="stat-number" style="font-size:22px;" id="apiStatus">Checking...</h3>
+                                </div>
+
+                                <div class="stat-icon icon-green">
+                                    <i class="bi bi-hdd-network"></i>
+                                </div>
+                            </div>
+
+                            <p class="stat-note mb-0">
+                                <i class="bi bi-shield-check"></i>
+                                Backend connection status
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- MANAGEMENT -->
+            <section class="mb-4">
+
+                <h4 class="section-title">
+                    <i class="bi bi-sliders me-2"></i>
+                    System Management
+                </h4>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="management-card">
+
+                            <div class="management-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                            <h5>Inventory Management</h5>
+
+                            <p>
+                                Add new equipment, update item details,
+                                monitor stock, and manage inventory records.
+                            </p>
+
+                            <a href="/items.html">
+                                Manage Inventory
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="management-card">
+
+                            <div class="management-icon">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+
+                            <h5>Reservation Management</h5>
+
+                            <p>
+                                Review reservation requests and approve,
+                                reject, or manage submitted reservations.
+                            </p>
+
+                            <a href="/reservations.html">
+                                Manage Reservations
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="management-card">
+
+                            <div class="management-icon">
+                                <i class="bi bi-clipboard-check"></i>
+                            </div>
+
+                            <h5>Event Checklists</h5>
+
+                            <p>
+                                Organize preparation tasks and monitor
+                                event readiness and task completion.
+                            </p>
+
+                            <a href="/checklists.html">
+                                Open Checklists
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="management-card">
+
+                            <div class="management-icon">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+
+                            <h5>Administrator Profile</h5>
+
+                            <p>
+                                View your personal account information
+                                and administrator account details.
+                            </p>
+
+                            <a href="/profile.html">
+                                View Profile
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- SYSTEM STATUS -->
+            <section>
+
+                <h4 class="section-title">
+                    <i class="bi bi-activity me-2"></i>
+                    System Information
+                </h4>
+
+                <div class="system-card">
+
+                    <div class="system-row">
+                        <span class="system-name">
+                            <i class="bi bi-window me-2"></i>
+                            Application
+                        </span>
+                        <span class="system-status">EVENT-UALLY DONE</span>
+                    </div>
+
+                    <div class="system-row">
+                        <span class="system-name">
+                            <i class="bi bi-shield-lock me-2"></i>
+                            Access Level
+                        </span>
+                        <span class="system-status">Administrator</span>
+                    </div>
+
+                    <div class="system-row">
+                        <span class="system-name">
+                            <i class="bi bi-database me-2"></i>
+                            Data Management
+                        </span>
+                        <span class="system-status">Connected through API</span>
+                    </div>
+
+                    <div class="system-row">
+                        <span class="system-name">
+                            <i class="bi bi-phone me-2"></i>
+                            Interface
+                        </span>
+                        <span class="system-status">Responsive Layout</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <footer class="footer">
+                EVENT-UALLY DONE © 2026
+                <br>
+                Event Inventory and Reservation Management System
+            </footer>
+
+        </main>
+
+    </div>
+</div>
+
+<script src="/js/dashboard.js" defer></script>
+<script src="/js/pwa.js" defer></script>
+
+</body>
+</html>

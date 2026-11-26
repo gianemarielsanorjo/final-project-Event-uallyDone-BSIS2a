@@ -1,16 +1,33 @@
-console.log("AUTH CONTROLLER FILE LOADED");
+
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// ==========================================
 // REGISTER
+// ==========================================
 exports.register = async (req, res) => {
     try {
-        const { full_name, email, password, confirmPassword } = req.body;
+        const {
+            full_name,
+            email,
+            password,
+            confirmPassword,
+            role
+        } = req.body;
 
-        if (!full_name || !email || !password || !confirmPassword) {
+        if (!full_name || !email || !password || !confirmPassword || !role) {
             return res.status(400).json({
                 message: "Please complete all required fields."
+            });
+        }
+
+        // Only Student and Event Organizer can register publicly
+        const allowedRoles = ["Student", "Event Organizer"];
+
+        if (!allowedRoles.includes(role)) {
+            return res.status(403).json({
+                message: "Admin registration is not allowed."
             });
         }
 
@@ -20,8 +37,19 @@ exports.register = async (req, res) => {
             });
         }
 
+        // Normalize user information
+        const normalizedEmail = email.toLowerCase().trim();
+        const normalizedName = full_name.trim();
+
+        if (!normalizedName) {
+            return res.status(400).json({
+                message: "Full name is required."
+            });
+        }
+
+        // Check if email already exists
         const existingUser = await User.findOne({
-            email: email.toLowerCase().trim()
+            email: normalizedEmail
         });
 
         if (existingUser) {
@@ -30,32 +58,48 @@ exports.register = async (req, res) => {
             });
         }
 
+        // Hash password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create new user
         const user = new User({
-            full_name,
-            email: email.toLowerCase().trim(),
+            full_name: normalizedName,
+            email: normalizedEmail,
             password: hashedPassword,
-            role: "Student"
+            role: role
         });
 
         await user.save();
 
-        res.status(201).json({
-            message: "User registered successfully!"
+        return res.status(201).json({
+            message: "User registered successfully!",
+            user: {
+                id: user._id,
+                full_name: user.full_name,
+                email: user.email,
+                role: user.role
+            }
         });
 
     } catch (error) {
-        res.status(500).json({
-            message: error.message
+        console.error("Registration error:", error);
+
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "Email is already registered."
+            });
+        }
+
+        return res.status(500).json({
+            message: "An unexpected server error occurred."
         });
     }
 };
 
+// ==========================================
 // LOGIN
+// ==========================================
 exports.login = async (req, res) => {
-    console.log("UPDATED LOGIN FUNCTION IS RUNNING");
-    
     try {
         const { email, password } = req.body;
 
@@ -66,11 +110,14 @@ exports.login = async (req, res) => {
         }
 
         if (!process.env.JWT_SECRET) {
+            console.error("JWT_SECRET is not configured.");
+
             return res.status(500).json({
-                message: "JWT configuration is missing."
+                message: "Authentication service is unavailable."
             });
         }
 
+        // Find user by normalized email
         const user = await User.findOne({
             email: email.toLowerCase().trim()
         });
@@ -81,7 +128,11 @@ exports.login = async (req, res) => {
             });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        // Compare submitted password with hashed password
+        const isMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
 
         if (!isMatch) {
             return res.status(401).json({
@@ -90,7 +141,6 @@ exports.login = async (req, res) => {
         }
 
         // Generate JWT token
-        console.log("JWT LOGIN CONTROLLER UPDATED");
         const token = jwt.sign(
             { id: user._id.toString() },
             process.env.JWT_SECRET,
@@ -111,8 +161,10 @@ exports.login = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            message: error.message
+        console.error("Login error:", error);
+
+        return res.status(500).json({
+            message: "An unexpected server error occurred."
         });
     }
 };

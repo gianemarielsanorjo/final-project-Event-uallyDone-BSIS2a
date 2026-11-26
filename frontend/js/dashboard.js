@@ -1,4 +1,5 @@
 
+
 // GET LOGGED-IN USER
 let user = null;
 
@@ -8,23 +9,39 @@ try {
     console.error("Unable to read user information:", error);
 }
 
-document.getElementById("userName").textContent =
-    user && user.full_name ? user.full_name : "Guest";
+const token = localStorage.getItem("token");
+
+const userName = document.getElementById("userName");
+const message = document.getElementById("message");
+const apiStatus = document.getElementById("apiStatus");
+
+if (!token || !user) {
+    window.location.replace("/login.html");
+}
+
+if (userName) {
+    userName.textContent = user.full_name || "Guest";
+}
 
 
 // LOAD DASHBOARD DATA
 async function loadDashboard() {
-
-    const message = document.getElementById("message");
-    const apiStatus = document.getElementById("apiStatus");
-
     try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
 
         const [itemsResponse, reservationsResponse] =
             await Promise.all([
                 fetch("/api/items"),
-                fetch("/api/reservations")
+                fetch("/api/reservations", { headers })
             ]);
+
+        if (itemsResponse.status === 401 ||
+            reservationsResponse.status === 401) {
+            logout();
+            return;
+        }
 
         if (!itemsResponse.ok) {
             throw new Error("Unable to load inventory items.");
@@ -41,25 +58,37 @@ async function loadDashboard() {
             throw new Error("Invalid dashboard data received.");
         }
 
-        document.getElementById("totalItems").textContent =
-            items.length;
+        const totalItemsElement = document.getElementById("totalItems");
+        const totalReservationsElement = document.getElementById("totalReservations");
 
-        document.getElementById("totalReservations").textContent =
-            reservations.length;
+        if (totalItemsElement) {
+            totalItemsElement.textContent = items.length;
+        }
 
-        message.className = "alert alert-success";
-        message.textContent = "Dashboard loaded successfully!";
+        if (totalReservationsElement) {
+            totalReservationsElement.textContent = reservations.length;
+        }
 
-        apiStatus.textContent =
-            "Connected to EVENT-UALLY DONE API.";
+        if (message) {
+            message.className = "alert alert-success";
+            message.textContent = "Dashboard loaded successfully!";
+        }
+
+        if (apiStatus) {
+            apiStatus.textContent =
+                "Connected to EVENT-UALLY DONE API.";
+        }
 
     } catch (error) {
+        if (message) {
+            message.className = "alert alert-warning";
+            message.textContent = error.message;
+        }
 
-        message.className = "alert alert-warning";
-        message.textContent = error.message;
-
-        apiStatus.textContent =
-            "Some dashboard data could not be loaded.";
+        if (apiStatus) {
+            apiStatus.textContent =
+                "Some dashboard data could not be loaded.";
+        }
 
         console.error("Dashboard Error:", error);
     }
@@ -68,7 +97,6 @@ async function loadDashboard() {
 
 // LOGOUT
 function logout(event) {
-
     if (event) {
         event.preventDefault();
     }
@@ -81,8 +109,14 @@ function logout(event) {
 
 
 // LOGOUT BUTTON EVENT
-document.getElementById("logoutLink").addEventListener("click", logout);
+const logoutLink = document.getElementById("logoutLink");
+
+if (logoutLink) {
+    logoutLink.addEventListener("click", logout);
+}
 
 
 // START DASHBOARD
-loadDashboard();
+if (token && user) {
+    loadDashboard();
+}

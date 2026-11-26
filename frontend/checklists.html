@@ -4,87 +4,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#203F65">
+
     <title>Event Checklists | EVENT-UALLY DONE</title>
 
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #F3F5F8;
+            background: linear-gradient(135deg, #EAF1FA, #F8F9FC);
             font-family: Arial, sans-serif;
             color: #212529;
             margin: 0;
         }
 
         .sidebar {
-            background-color: #203F65;
+            background: linear-gradient(180deg, #203F65, #142D49);
             color: white;
             min-height: 100vh;
-            padding: 25px 15px;
+            padding: 30px 18px;
         }
 
         .sidebar h4 {
             color: #FFFFFF;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             letter-spacing: 1px;
+            line-height: 1.5;
         }
 
         .sidebar a {
             display: block;
-            padding: 12px;
+            padding: 16px 18px;
             color: #FFFFFF;
             text-decoration: none;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
         }
 
-        .sidebar a:hover,
+        .sidebar a:hover {
+            background-color: #FFCA28;
+            color: #203F65;
+            transform: translateX(4px);
+        }
+
         .sidebar a.active {
-            background-color: #162F4D;
-            color: #FFFFFF;
-        }
-
-        .main-content {
-            padding: 30px;
-        }
-
-        .main-content h2,
-        .main-content h4 {
+            background-color: #FFCA28;
             color: #203F65;
             font-weight: bold;
         }
 
-        .page-header,
+        .main-content {
+            padding: 35px;
+        }
+
+        .page-header {
+            background: linear-gradient(120deg, #203F65, #315C89);
+            color: white;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 28px;
+            box-shadow: 0 5px 15px rgba(32, 63, 101, 0.15);
+        }
+
+        .page-header h2 {
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #E5EDF7 !important;
+        }
+
         .content-card {
             background-color: #FFFFFF;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 28px;
+            border-radius: 18px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            border: 1px solid #E1EAF5;
+        }
+
+        .content-card h5 {
+            color: #203F65;
         }
 
         .btn-primary {
             background-color: #203F65;
             border-color: #203F65;
+            padding: 11px 20px;
+            border-radius: 9px;
+            font-weight: 600;
+            transition: 0.2s ease;
         }
 
         .btn-primary:hover {
-            background-color: #162F4D;
-            border-color: #162F4D;
+            background-color: #FFCA28;
+            border-color: #FFCA28;
+            color: #203F65;
         }
 
         .task-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+            padding: 18px;
+            border: 1px solid #E5EAF1;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background-color: #F8FAFD;
+            transition: 0.2s ease;
+        }
+
+        .task-item:hover {
+            background-color: #EDF3FA;
+            border-color: #C5D5E8;
         }
 
         .task-item:last-child {
-            border-bottom: none;
+            margin-bottom: 0;
         }
 
-        .progress {
-            height: 10px;
+        .task-item h6 {
+            color: #203F65;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .task-item.task-completed h6 {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .task-item .form-check-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         .form-check-input:checked {
@@ -92,13 +155,91 @@
             border-color: #203F65;
         }
 
+        .progress {
+            height: 13px;
+            background-color: #E5EAF1;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #203F65, #FFCA28);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        #progressText {
+            color: #203F65;
+            font-weight: 600;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background-color: #203F65;
+            color: white;
+        }
+
+        .modal-header .modal-title {
+            font-weight: bold;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
         @media (max-width: 767px) {
             .sidebar {
                 min-height: auto;
+                padding: 22px 18px;
+            }
+
+            .sidebar h4 {
+                margin-bottom: 20px;
+                font-size: 20px;
+            }
+
+            .sidebar a {
+                padding: 15px;
+                font-size: 16px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .sidebar a:hover {
+                transform: none;
             }
 
             .main-content {
                 padding: 20px 15px;
+            }
+
+            .page-header {
+                padding: 23px;
+            }
+
+            .page-header h2 {
+                font-size: 23px;
+            }
+
+            .content-card {
+                padding: 20px 15px;
+            }
+
+            .content-card .d-flex {
+                align-items: stretch !important;
+            }
+
+            .content-card .btn-primary {
+                width: 100%;
+            }
+
+            .task-item {
+                padding: 15px 12px;
             }
         }
     </style>
@@ -109,15 +250,15 @@
 <div class="container-fluid">
     <div class="row">
 
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR NAVIGATION -->
         <div class="col-md-3 col-lg-2 sidebar">
             <h4>EVENT-UALLY DONE</h4>
 
             <a href="/dashboard">Dashboard</a>
             <a href="/items.html">Inventory</a>
             <a href="/reservations.html">Reservations</a>
-            <a href="/checklists.html" class="active">Checklists</a>
-            <a href="#" onclick="logout(event)">Logout</a>
+            <a href="/checklists.html" class="active" aria-current="page">Checklists</a>
+            <a href="#" id="logoutLink">Logout</a>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -125,11 +266,12 @@
 
             <div class="page-header">
                 <h2>Event Checklists</h2>
-                <p class="text-muted mb-0">
+                <p class="mb-0">
                     Organize and monitor tasks before, during, and after school events.
                 </p>
             </div>
 
+            <!-- CHECKLIST CARD -->
             <div class="content-card">
 
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
@@ -144,7 +286,7 @@
 
                 <!-- PROGRESS -->
                 <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                         <span class="fw-bold">Overall Progress</span>
                         <span id="progressText">2 of 5 completed (40%)</span>
                     </div>
@@ -153,7 +295,10 @@
                         <div id="progressBar"
                             class="progress-bar"
                             role="progressbar"
-                            style="width: 40%">
+                            style="width: 40%"
+                            aria-valuenow="40"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
                         </div>
                     </div>
                 </div>
@@ -209,25 +354,28 @@
 </div>
 
 <!-- ADD TASK MODAL -->
-<div class="modal fade" id="addTaskModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade" id="addTaskModal" tabindex="-1"
+    aria-labelledby="addTaskModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Add New Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
                 <form id="taskForm">
 
                     <div class="mb-3">
-                        <label class="form-label">Task Name</label>
+                        <label for="taskName" class="form-label">Task Name</label>
                         <input type="text" class="form-control" id="taskName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Assigned Team</label>
+                        <label for="assignedTeam" class="form-label">Assigned Team</label>
                         <input type="text" class="form-control" id="assignedTeam" required>
                     </div>
 
@@ -242,91 +390,14 @@
     </div>
 </div>
 
+<!-- BOOTSTRAP -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    const taskList = document.getElementById("taskList");
-    const progressBar = document.getElementById("progressBar");
-    const progressText = document.getElementById("progressText");
+<!-- ROLE AUTHENTICATION -->
+<script src="/js/checklists-auth.js" defer></script>
 
-    // UPDATE PROGRESS
-    function updateProgress() {
-        const checkboxes = document.querySelectorAll(".task-check");
-        const completed = document.querySelectorAll(".task-check:checked").length;
-        const total = checkboxes.length;
-
-        const percentage = total === 0
-            ? 0
-            : Math.round((completed / total) * 100);
-
-        progressBar.style.width = percentage + "%";
-        progressText.textContent =
-            `${completed} of ${total} completed (${percentage}%)`;
-    }
-
-    // CHECK TASK
-    taskList.addEventListener("change", function(event) {
-        if (event.target.classList.contains("task-check")) {
-            updateProgress();
-        }
-    });
-
-    // ADD NEW TASK
-    document.getElementById("taskForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const taskName = document.getElementById("taskName").value.trim();
-        const assignedTeam = document.getElementById("assignedTeam").value.trim();
-
-        if (!taskName || !assignedTeam) return;
-
-        const task = document.createElement("div");
-        task.className = "task-item d-flex align-items-center gap-3";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "form-check-input task-check";
-
-        const details = document.createElement("div");
-
-        const heading = document.createElement("h6");
-        heading.className = "mb-1";
-        heading.textContent = taskName;
-
-        const description = document.createElement("small");
-        description.className = "text-muted";
-        description.textContent = assignedTeam;
-
-        details.appendChild(heading);
-        details.appendChild(description);
-
-        task.appendChild(checkbox);
-        task.appendChild(details);
-
-        taskList.appendChild(task);
-
-        updateProgress();
-
-        document.getElementById("taskForm").reset();
-
-        bootstrap.Modal.getInstance(
-            document.getElementById("addTaskModal")
-        ).hide();
-    });
-
-    // LOGOUT
-    function logout(event) {
-        event.preventDefault();
-
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-
-        window.location.replace("/login.html");
-    }
-
-    // INITIAL PROGRESS
-    updateProgress();
-</script>
+<!-- EXISTING CHECKLIST FUNCTIONALITY -->
+<script src="/js/checklists.js" defer></script>
 
 </body>
 </html>

@@ -4,244 +4,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#203F65">
+
     <title>My Profile | EVENT-UALLY DONE</title>
 
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <style>
+        :root {
+            --navy: #203F65;
+            --navy-dark: #142B49;
+            --gold: #FFCA28;
+            --light-blue: #EAF1FA;
+            --muted: #718096;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #f4f7fb;
+            background: var(--light-blue);
             font-family: Arial, sans-serif;
+            min-height: 100vh;
+            color: #26364A;
         }
 
+        /* NAVIGATION */
         .navbar {
-            background-color: #173b70;
+            background: linear-gradient(120deg, var(--navy), var(--navy-dark));
+            padding: 15px 0;
+            box-shadow: 0 4px 15px rgba(20, 43, 73, .15);
         }
 
-        .navbar-brand, .nav-link {
+        .navbar-brand {
             color: white !important;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: .3px;
         }
 
-        .page-header, .content-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
+        .navbar-brand span {
+            color: var(--gold);
+        }
+
+        .nav-link {
+            color: #E5EDF7 !important;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 14px !important;
+            border-radius: 8px;
+            transition: .2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--gold) !important;
+            background: rgba(255, 255, 255, .08);
+        }
+
+        /* PAGE */
+        .main-container {
+            max-width: 1120px;
+            margin: auto;
+            padding: 35px 20px;
+        }
+
+        .page-heading {
             margin-bottom: 25px;
         }
 
-        .content-card {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        .page-heading h2 {
+            color: var(--navy);
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 7px;
         }
 
-        .btn-primary {
-            background-color: #245ca6;
-            border: none;
+        .page-heading p {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .breadcrumb-label {
+            color: #8A9AAF;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* PROFILE HERO */
+        .profile-hero {
+            background: linear-gradient(120deg, #203F65, #345D8C);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 22px rgba(32, 63, 101, .15);
+        }
+
+        .profile-hero::after {
+            content: "";
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border: 35px solid rgba(255, 202, 40, .10);
+            border-radius: 50%;
+            right: -65px;
+            top: -90px;
+        }
+
+        .profile-hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 25px;
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
-            background-color: #dce8f8;
-            color: #173b70;
+            width: 112px;
+            height: 112px;
+            min-width: 112px;
+            background: var(--gold);
+            color: var(--navy);
+            border: 5px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-size: 38px;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .12);
+        }
+
+        .profile-hero h3 {
+            color: white;
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 7px;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-hero .email {
+            color: #DCE7F4;
+            font-size: 14px;
+            margin-bottom: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .member-label {
+            color: #DCE7F4;
+            font-size: 12px;
+            margin-top: 13px;
+        }
+
+        /* CARDS */
+        .section-title {
+            color: var(--navy);
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #E3EAF3;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(32, 63, 101, .055);
+            height: 100%;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 17px 0;
+            border-bottom: 1px solid #EDF1F6;
+        }
+
+        .info-item:first-of-type {
+            padding-top: 5px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-icon {
+            width: 43px;
+            height: 43px;
+            min-width: 43px;
+            border-radius: 12px;
+            background: #EAF1FA;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
         }
 
         .info-label {
-            color: #6c757d;
+            color: #8794A5;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: var(--navy);
             font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        /* STATUS CARD */
+        .status-card {
+            background: white;
+            border: 1px solid #E3EAF3;
+            padding: 23px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(32, 63, 101, .055);
+            margin-bottom: 20px;
+        }
+
+        .status-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #E2F5EA;
+            color: #198754;
+            border-radius: 12px;
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .status-card h6 {
+            color: var(--navy);
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .status-card p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 13px;
+        }
+
+        .active-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #E2F5EA;
+            color: #198754;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .active-dot {
+            width: 7px;
+            height: 7px;
+            background: #198754;
+            border-radius: 50%;
+        }
+
+        /* ACCOUNT NOTE */
+        .account-note {
+            background: #FFF8E5;
+            border: 1px solid #F5E5B4;
+            border-radius: 13px;
+            padding: 18px;
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+        }
+
+        .account-note i {
+            color: #A87900;
+            font-size: 21px;
+        }
+
+        .account-note h6 {
+            color: #795900;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .account-note p {
+            color: #806B38;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        #profileMessage {
+            border-radius: 12px;
+            font-size: 13px;
+            border: none;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8794A5;
+            font-size: 12px;
+            padding: 28px 0 8px;
+        }
+
+        @media(max-width: 768px) {
+            .navbar-nav {
+                padding-top: 12px;
+            }
+
+            .main-container {
+                padding: 24px 15px;
+            }
+
+            .profile-hero {
+                padding: 24px 20px;
+            }
+
+            .profile-hero-content {
+                align-items: flex-start;
+                gap: 17px;
+            }
+
+            .profile-avatar {
+                width: 78px;
+                height: 78px;
+                min-width: 78px;
+                font-size: 27px;
+            }
+
+            .profile-hero h3 {
+                font-size: 19px;
+            }
+
+            .profile-hero .email {
+                font-size: 12px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+        }
+
+        @media(max-width: 420px) {
+            .profile-hero-content {
+                flex-direction: column;
+            }
+
+            .profile-hero h3 {
+                font-size: 21px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg">
+<!-- NAVIGATION -->
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="dashboard.html">
-            EVENT-UALLY DONE
+
+        <a class="navbar-brand" href="/login.html">
+            EVENT-UALLY <span>DONE</span>
         </a>
 
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
-            <a class="nav-link" href="items.html">Inventory</a>
-            <a class="nav-link" href="reservations.html">Reservations</a>
-            <a class="nav-link" href="checklists.html">Checklists</a>
-            <a class="nav-link active" href="profile.html">Profile</a>
+        <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <div class="navbar-nav ms-auto" id="profileNavigation">
+                <!-- Navigation generated according to user role -->
+            </div>
+
         </div>
+
     </div>
 </nav>
 
-<div class="container py-4">
+<main class="main-container">
 
-    <div class="page-header">
-        <h2 class="fw-bold">My Profile</h2>
-        <p class="text-muted mb-0">
-            View and manage your account information.
+    <!-- PAGE HEADING -->
+    <div class="page-heading">
+
+        <div class="breadcrumb-label">
+            <i class="bi bi-house-door"></i>
+            / Account / My Profile
+        </div>
+
+        <h2>My Profile</h2>
+
+        <p>
+            Manage and view your registered account information.
         </p>
-    </div>
-
-    <div class="row g-4">
-
-        <div class="col-md-4">
-            <div class="content-card text-center">
-
-                <div class="profile-avatar mx-auto">U</div>
-
-                <h5 class="fw-bold" id="displayName">Test User</h5>
-                <p class="text-muted mb-2" id="displayEmail">test@test.com</p>
-
-                <span class="badge bg-primary" id="displayRole">
-                    Event Organizer
-                </span>
-
-                <hr>
-
-                <p class="text-muted mb-0">
-                    EVENT-UALLY DONE Member
-                </p>
-
-            </div>
-        </div>
-
-        <div class="col-md-8">
-            <div class="content-card">
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold mb-0">Account Information</h5>
-
-                    <button class="btn btn-primary btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editProfileModal">
-                        Edit Profile
-                    </button>
-                </div>
-
-                <div class="mb-3">
-                    <p class="info-label mb-1">Full Name</p>
-                    <h6 id="infoName">Test User</h6>
-                </div>
-
-                <hr>
-
-                <div class="mb-3">
-                    <p class="info-label mb-1">Email Address</p>
-                    <h6 id="infoEmail">test@test.com</h6>
-                </div>
-
-                <hr>
-
-                <div class="mb-3">
-                    <p class="info-label mb-1">Account Role</p>
-                    <h6 id="infoRole">Event Organizer</h6>
-                </div>
-
-                <hr>
-
-                <div class="mb-0">
-                    <p class="info-label mb-1">Account Status</p>
-                    <span class="badge bg-success">Active</span>
-                </div>
-
-            </div>
-        </div>
 
     </div>
-</div>
 
-<!-- Edit Profile Modal -->
-<div class="modal fade" id="editProfileModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Profile</h5>
-                <button type="button" class="btn-close"
-                    data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <form id="profileForm">
-
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control"
-                            id="editName" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" class="form-control"
-                            id="editEmail" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Role</label>
-                        <select class="form-select" id="editRole" required>
-                            <option value="Admin">Admin</option>
-                            <option value="Event Organizer">Event Organizer</option>
-                            <option value="Student">Student</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">
-                        Save Changes
-                    </button>
-
-                </form>
-
-            </div>
-        </div>
+    <!-- PROFILE MESSAGE -->
+    <div id="profileMessage" class="alert alert-info">
+        <i class="bi bi-arrow-repeat me-2"></i>
+        Loading your profile information...
     </div>
-</div>
+
+    <!-- PROFILE CONTENT -->
+    <div id="profileContent" style="display:none;">
+
+        <!-- PROFILE HERO -->
+        <section class="profile-hero">
+
+            <div class="profile-hero-content">
+
+                <div class="profile-avatar" id="profileAvatar">
+                    U
+                </div>
+
+                <div>
+
+                    <h3 id="displayName">Loading...</h3>
+
+                    <p class="email" id="displayEmail">
+                        Loading...
+                    </p>
+
+                    <span class="role-badge" id="displayRole">
+                        Loading...
+                    </span>
+
+                    <p class="member-label mb-0">
+                        <i class="bi bi-patch-check-fill me-1"></i>
+                        EVENT-UALLY DONE Member
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- INFORMATION -->
+        <div class="row g-4">
+
+            <div class="col-lg-8">
+
+                <section class="content-card">
+
+                    <h5 class="section-title">
+                        <i class="bi bi-person-vcard-fill me-2"></i>
+                        Personal Information
+                    </h5>
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div>
+                            <p class="info-label">Full Name</p>
+                            <h6 class="info-value" id="infoName">-</h6>
+                        </div>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+
+                        <div>
+                            <p class="info-label">Email Address</p>
+                            <h6 class="info-value" id="infoEmail">-</h6>
+                        </div>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+
+                        <div>
+                            <p class="info-label">Account Role</p>
+                            <h6 class="info-value" id="infoRole">-</h6>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- ACCOUNT STATUS -->
+            <div class="col-lg-4">
+
+                <section class="status-card">
+
+                    <div class="status-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <h6>Account Status</h6>
+
+                    <p>
+                        Your account is registered in the
+                        EVENT-UALLY DONE system.
+                    </p>
+
+                    <span class="active-badge">
+                        <span class="active-dot"></span>
+                        Active Account
+                    </span>
+
+                </section>
+
+                <section class="account-note">
+
+                    <i class="bi bi-info-circle-fill"></i>
+
+                    <div>
+                        <h6>Account Information</h6>
+
+                        <p>
+                            Your profile information is retrieved from
+                            your registered account. Contact your system
+                            administrator if your account details need correction.
+                        </p>
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        EVENT-UALLY DONE © 2026
+        <br>
+        Event Inventory and Reservation Management System
+    </footer>
+
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    const profileForm = document.getElementById("profileForm");
-
-    document.getElementById("editProfileModal").addEventListener("show.bs.modal", function() {
-        document.getElementById("editName").value =
-            document.getElementById("infoName").textContent;
-
-        document.getElementById("editEmail").value =
-            document.getElementById("infoEmail").textContent;
-
-        document.getElementById("editRole").value =
-            document.getElementById("infoRole").textContent;
-    });
-
-    profileForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const name = document.getElementById("editName").value.trim();
-        const email = document.getElementById("editEmail").value.trim();
-        const role = document.getElementById("editRole").value;
-
-        if (!name || !email) return;
-
-        document.getElementById("displayName").textContent = name;
-        document.getElementById("displayEmail").textContent = email;
-        document.getElementById("displayRole").textContent = role;
-
-        document.getElementById("infoName").textContent = name;
-        document.getElementById("infoEmail").textContent = email;
-        document.getElementById("infoRole").textContent = role;
-
-        document.querySelector(".profile-avatar").textContent =
-            name.charAt(0).toUpperCase();
-
-        bootstrap.Modal.getInstance(
-            document.getElementById("editProfileModal")
-        ).hide();
-    });
-</script>
+<script src="/js/profile.js" defer></script>
 
 </body>
 </html>

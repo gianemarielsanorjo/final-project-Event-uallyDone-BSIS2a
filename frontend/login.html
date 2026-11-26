@@ -8,223 +8,662 @@
 
     <title>EVENT-UALLY DONE | Login</title>
 
-    <!-- PWA MANIFEST -->
     <link rel="manifest" href="/manifest.json">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        body {
-            background-color: #f4f7fb;
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
         }
 
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            color: #263445;
+            background: #F3F6FB;
+        }
+
+        /* NAVBAR */
         .navbar {
-            background-color: white;
+            background: #FFFFFF;
+            padding: 16px 0;
+            border-bottom: 1px solid #E7EDF5;
         }
 
         .brand {
-            color: #294c75;
-            font-weight: bold;
+            color: #203F65 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: .3px;
         }
 
-        .login-container {
-            min-height: 85vh;
+        .brand-icon {
+            color: #D9A514;
+            margin-right: 8px;
+        }
+
+        .home-link {
+            color: #203F65;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border: 1px solid #DCE5F0;
+            border-radius: 9px;
+            transition: .2s ease;
+        }
+
+        .home-link:hover {
+            background: #203F65;
+            color: #FFFFFF;
+            border-color: #203F65;
+        }
+
+        /* MAIN LAYOUT */
+        .main-section {
+            min-height: calc(100vh - 130px);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px 15px;
+            padding: 55px 20px;
         }
 
-        .login-card {
+        .login-wrapper {
             width: 100%;
-            max-width: 450px;
-            border: none;
-            border-radius: 15px;
-            padding: 35px;
+            max-width: 1020px;
+            min-height: 590px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #FFFFFF;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 65px rgba(32, 63, 101, .12);
+            border: 1px solid #E7EDF5;
         }
 
-        .login-title {
-            color: #294c75;
-            font-weight: bold;
+        /* LEFT PANEL */
+        .welcome-panel {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 55px 48px;
+            color: #FFFFFF;
+            background: linear-gradient(145deg, #162F4D 0%, #203F65 55%, #315C89 100%);
         }
 
-        .btn-login {
-            background-color: #294c75;
-            color: white;
-            padding: 12px;
+        .welcome-panel::before,
+        .welcome-panel::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 50%;
+            pointer-events: none;
         }
 
-        .btn-login:hover {
-            background-color: #1e3858;
-            color: white;
+        .welcome-panel::before {
+            width: 360px;
+            height: 360px;
+            right: -150px;
+            top: -120px;
+        }
+
+        .welcome-panel::after {
+            width: 280px;
+            height: 280px;
+            right: -100px;
+            top: -80px;
+        }
+
+        .panel-content,
+        .panel-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel-logo {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 202, 40, .13);
+            color: #FFCA28;
+            border: 1px solid rgba(255, 202, 40, .35);
+            border-radius: 18px;
+            font-size: 30px;
+            margin-bottom: 38px;
+        }
+
+        .welcome-heading {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 18px;
+        }
+
+        .welcome-heading span {
+            color: #FFCA28;
+        }
+
+        .welcome-description {
+            max-width: 360px;
+            color: #D5E2F1;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .feature-list {
+            margin-top: 35px;
+            display: grid;
+            gap: 17px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #EDF3FA;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .feature-item i {
+            color: #FFCA28;
+            font-size: 17px;
+        }
+
+        .panel-footer {
+            color: #B9C9DC;
+            font-size: 11px;
+            letter-spacing: .4px;
+        }
+
+        /* RIGHT PANEL */
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 55px 55px;
+        }
+
+        .login-content {
+            width: 100%;
+            max-width: 365px;
+        }
+
+        .mobile-logo {
+            display: none;
+        }
+
+        .form-heading {
+            color: #203F65;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 29px;
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .form-subtitle {
+            color: #8190A3;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* MESSAGE */
+        #message {
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        /* INPUTS */
+        .form-label {
+            display: block;
+            color: #294766;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8B9AAF;
+            font-size: 16px;
+            z-index: 2;
         }
 
         .form-control {
-            padding: 11px;
+            width: 100%;
+            height: 51px;
+            padding: 12px 15px 12px 44px;
+            border: 1px solid #DCE4EE;
+            border-radius: 10px;
+            background: #FBFCFE;
+            color: #263445;
+            font-size: 13px;
+            transition: .2s ease;
+        }
+
+        .form-control::placeholder {
+            color: #A4AFBD;
+        }
+
+        .form-control:focus {
+            background: #FFFFFF;
+            border-color: #315C89;
+            box-shadow: 0 0 0 4px rgba(32, 63, 101, .09);
+        }
+
+        /* PASSWORD TOGGLE */
+        .password-input {
+            padding-right: 52px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 13px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #8190A3;
+            padding: 6px;
+            cursor: pointer;
+            font-size: 17px;
+            z-index: 3;
+            transition: .2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #203F65;
+        }
+
+        .password-toggle:focus-visible {
+            outline: 2px solid #315C89;
+            border-radius: 5px;
+        }
+
+        /* REMEMBER ME */
+        .form-check {
+            margin-top: 17px;
+            margin-bottom: 25px;
+        }
+
+        .form-check-input {
+            border-color: #B9C7D7;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #203F65;
+            border-color: #203F65;
+        }
+
+        .form-check-label {
+            color: #718096;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* LOGIN BUTTON */
+        .btn-login {
+            height: 52px;
+            border: none;
+            border-radius: 10px;
+            color: #FFFFFF;
+            background: linear-gradient(110deg, #203F65, #315C89);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            box-shadow: 0 7px 17px rgba(32, 63, 101, .17);
+            transition: .25s ease;
+        }
+
+        .btn-login:hover {
+            color: #203F65;
+            background: #FFCA28;
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(32, 63, 101, .15);
+        }
+
+        .btn-login:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .register-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 25px 0 19px;
+            color: #A0ABBA;
+            font-size: 11px;
+        }
+
+        .register-divider::before,
+        .register-divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: #E8EDF3;
+        }
+
+        .register-text {
+            color: #8290A1;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .register-link {
+            color: #203F65;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .register-link:hover {
+            color: #C58A00;
+            text-decoration: underline;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 17px;
+            text-align: center;
+            color: #8A97A8;
+            background: #FFFFFF;
+            border-top: 1px solid #E7EDF5;
+            font-size: 11px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-section {
+                padding: 35px 16px;
+            }
+
+            .login-wrapper {
+                max-width: 480px;
+                min-height: auto;
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-panel {
+                display: none;
+            }
+
+            .form-panel {
+                padding: 42px 30px;
+            }
+
+            .mobile-logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 58px;
+                height: 58px;
+                margin: 0 auto 22px;
+                color: #D9A514;
+                background: #203F65;
+                border-radius: 16px;
+                font-size: 27px;
+            }
+
+            .form-heading {
+                font-size: 26px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand {
+                font-size: 15px;
+            }
+
+            .home-link {
+                padding: 8px 11px;
+                font-size: 11px;
+            }
+
+            .form-panel {
+                padding: 35px 22px;
+            }
+
+            .form-heading {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar shadow-sm">
-        <div class="container">
-            <a class="navbar-brand brand" href="index.html">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand brand mb-0" href="/">
+                <i class="bi bi-calendar2-check-fill brand-icon"></i>
                 EVENT-UALLY DONE
             </a>
 
-            <a href="index.html" class="btn btn-outline-primary btn-sm">
+            <a href="/" class="home-link">
+                <i class="bi bi-house-door me-1"></i>
                 Back to Home
             </a>
         </div>
     </nav>
 
-    <section class="login-container">
-        <div class="card login-card shadow">
+    <!-- MAIN SECTION -->
+    <main class="main-section">
 
-            <div class="text-center mb-4">
-                <h2 class="login-title">Welcome Back!</h2>
-                <p class="text-muted">
-                    Login to your EVENT-UALLY DONE account.
-                </p>
-            </div>
+        <div class="login-wrapper">
 
-            <div id="message" class="alert d-none" role="alert"></div>
+            <!-- LEFT WELCOME PANEL -->
+            <section class="welcome-panel">
 
-            <form id="loginForm">
+                <div class="panel-content">
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">
-                        Email Address
-                    </label>
+                    <div class="panel-logo">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
 
-                    <input
-                        type="email"
-                        class="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        required
-                    >
+                    <h1 class="welcome-heading">
+                        Every event<br>
+                        starts with a<br>
+                        <span>great plan.</span>
+                    </h1>
+
+                    <p class="welcome-description">
+                        Welcome to EVENT-UALLY DONE! Your centralized platform
+                        for managing event inventory, reservations, and
+                        organizing successful events.
+                    </p>
+
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Easy inventory management</span>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Convenient reservation tracking</span>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Organized event coordination</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        class="form-control"
-                        id="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        required
-                    >
+                <div class="panel-footer">
+                    EVENT HANDLERS • EVENT MANAGEMENT SYSTEM
                 </div>
 
-                <div class="mb-3 form-check">
-                    <input
-                        type="checkbox"
-                        class="form-check-input"
-                        id="remember"
-                        name="remember"
-                    >
+            </section>
 
-                    <label class="form-check-label" for="remember">
-                        Remember me
-                    </label>
+            <!-- RIGHT LOGIN PANEL -->
+            <section class="form-panel">
+
+                <div class="login-content">
+
+                    <div class="mobile-logo">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+
+                    <div class="text-center text-md-start">
+
+                        <h2 class="form-heading">
+                            Welcome back!
+                        </h2>
+
+                        <p class="form-subtitle">
+                            Sign in to access your account and continue
+                            managing your events.
+                        </p>
+
+                    </div>
+
+                    <!-- LOGIN MESSAGE -->
+                    <div id="message" class="alert d-none" role="alert"></div>
+
+                    <!-- LOGIN FORM -->
+                    <form id="loginForm" method="POST">
+
+                        <!-- EMAIL -->
+                        <div class="mb-4">
+
+                            <label for="email" class="form-label">
+                                Email Address
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <i class="bi bi-envelope input-icon"></i>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email address"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div class="mb-3">
+
+                            <label for="password" class="form-label">
+                                Password
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <i class="bi bi-lock input-icon"></i>
+
+                                <input
+                                    type="password"
+                                    class="form-control password-input"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-password-toggle="password"
+                                    aria-label="Show password"
+                                    aria-pressed="false"
+                                    title="Show password"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- REMEMBER ME -->
+                        <div class="form-check">
+
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="remember"
+                                name="remember"
+                            >
+
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+
+                        </div>
+
+                        <!-- LOGIN BUTTON -->
+                        <button
+                            type="submit"
+                            class="btn btn-login w-100"
+                            id="loginButton"
+                        >
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            Login to Account
+                        </button>
+
+                    </form>
+
+                    <div class="register-divider">
+                        NEW TO EVENT-UALLY DONE?
+                    </div>
+
+                    <p class="register-text mb-0">
+                        Don't have an account?
+                        <a href="/register.html" class="register-link">
+                            Create an account
+                        </a>
+                    </p>
+
                 </div>
 
-                <button type="submit" class="btn btn-login w-100" id="loginButton">
-                    Login
-                </button>
-
-            </form>
-
-            <div class="text-center mt-4">
-                <p class="mb-0">
-                    Don't have an account?
-                    <a href="register.html" class="text-decoration-none">
-                        Register here
-                    </a>
-                </p>
-            </div>
+            </section>
 
         </div>
-    </section>
 
-    <footer class="text-center py-3 text-muted">
-        <small>
-            &copy; 2026 EVENT-UALLY DONE | Event Handlers
-        </small>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2026 EVENT-UALLY DONE | Event Handlers
     </footer>
 
-    <!-- EXISTING LOGIN FUNCTIONALITY -->
-    <script>
-        // AUTOMATIC API URL FOR LOCAL AND LIVE DEPLOYMENT
-        const API_URL = `${window.location.origin}/api/auth`;
-
-        const loginForm = document.getElementById("loginForm");
-        const message = document.getElementById("message");
-        const loginButton = document.getElementById("loginButton");
-
-        loginForm.addEventListener("submit", async function(event) {
-            event.preventDefault();
-
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value;
-
-            message.classList.add("d-none");
-            loginButton.disabled = true;
-            loginButton.textContent = "Logging in...";
-
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || "Login failed.");
-                }
-
-                if (!data.token) {
-                    throw new Error("Login succeeded but no authentication token was received.");
-                }
-
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("user", JSON.stringify(data.user));
-
-                message.textContent = "Login successful! Redirecting...";
-                message.className = "alert alert-success";
-
-                window.location.href = "/dashboard";
-
-            } catch (error) {
-                message.textContent = error.message;
-                message.className = "alert alert-danger";
-
-            } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = "Login";
-            }
-        });
-    </script>
-
-    <!-- BOOTSTRAP -->
+    <!-- EXTERNAL JAVASCRIPT -->
+    <script src="/js/password-toggle.js" defer></script>
+    <script src="/js/login.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- PWA SERVICE WORKER REGISTRATION -->
     <script src="/js/pwa.js" defer></script>
 
 </body>

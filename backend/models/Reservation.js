@@ -8,6 +8,14 @@ const reservationSchema = new mongoose.Schema({
         trim: true
     },
 
+    // Reservation owner
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: false,
+        default: null
+    },
+
     item: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Item",
@@ -34,9 +42,19 @@ const reservationSchema = new mongoose.Schema({
         type: String,
         enum: ["Pending", "Approved", "Rejected"],
         default: "Pending"
+    },
+
+    // Tracks whether this reservation already deducted inventory
+    stock_deducted: {
+        type: Boolean,
+        default: false
     }
+
 }, {
     timestamps: true
 });
+
+// Index for faster owner-based reservation searches
+reservationSchema.index({ user: 1 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);

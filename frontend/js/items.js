@@ -1,7 +1,13 @@
 
 const API_URL = "/api/items";
+const AUTH_URL = "/api/auth/profile";
 
-// GET HTML ELEMENTS
+const token = localStorage.getItem("token");
+
+let currentUser = null;
+let isAdmin = false;
+let allItems = [];
+
 const itemsTableBody = document.getElementById("itemsTableBody");
 const resultCount = document.getElementById("resultCount");
 
@@ -16,14 +22,97 @@ const editItemForm = document.getElementById("editItemForm");
 const saveItemButton = document.getElementById("saveItemButton");
 const updateItemButton = document.getElementById("updateItemButton");
 
-let allItems = [];
-
-// BOOTSTRAP MODALS
 const addModalElement = document.getElementById("addItemModal");
 const editModalElement = document.getElementById("editItemModal");
 
-const addModal = bootstrap.Modal.getOrCreateInstance(addModalElement);
-const editModal = bootstrap.Modal.getOrCreateInstance(editModalElement);
+let addModal = null;
+let editModal = null;
+
+
+// AUTHORIZATION HEADER
+function getAuthHeaders(includeJSON = false) {
+    const headers = {
+        Authorization: `Bearer ${token}`
+    };
+
+    if (includeJSON) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
+}
+
+
+// VERIFY LOGGED-IN USER AND ROLE
+async function verifyUser() {
+    if (!token) {
+        window.location.replace("/login.html");
+        return false;
+    }
+
+    try {
+        const response = await fetch(AUTH_URL, {
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+            throw new Error("Session expired. Please log in again.");
+        }
+
+        const data = await response.json();
+
+        currentUser = data.user;
+
+        if (!currentUser ||
+            !["Admin", "Event Organizer", "Student"].includes(currentUser.role)) {
+            throw new Error("Invalid user role.");
+        }
+
+        isAdmin = currentUser.role === "Admin";
+
+        localStorage.setItem("user", JSON.stringify(currentUser));
+
+        applyRolePermissions();
+
+        return true;
+
+    } catch (error) {
+        console.error("User verification error:", error);
+
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+
+        window.location.replace("/login.html");
+        return false;
+    }
+}
+
+
+// SHOW OR HIDE ADMIN CONTROLS
+function applyRolePermissions() {
+    // Hide Add Item button for non-admin users
+    document.querySelectorAll(
+        '[data-bs-target="#addItemModal"], [href="#addItemModal"]'
+    ).forEach(element => {
+        element.classList.toggle("d-none", !isAdmin);
+    });
+
+    // Hide Add and Edit modals for non-admin users
+    if (addModalElement) {
+        addModalElement.classList.toggle("d-none", !isAdmin);
+    }
+
+    if (editModalElement) {
+        editModalElement.classList.toggle("d-none", !isAdmin);
+    }
+
+    // Update page role indicator if available
+    const roleDisplay = document.getElementById("userRole");
+
+    if (roleDisplay) {
+        roleDisplay.textContent = currentUser.role;
+    }
+}
 
 
 // GET AVAILABLE QUANTITY
@@ -116,6 +205,7 @@ async function loadItems() {
         `;
 
         resultCount.textContent = "Unable to load inventory.";
+
         document.getElementById("lowStockAlertList").innerHTML =
             '<p class="text-danger mb-0">Unable to load stock alerts.</p>';
     }
@@ -217,6 +307,23 @@ function displayItems() {
         const id = escapeHTML(item._id);
         const status = getItemStatus(item);
 
+        // ADMIN ONLY ACTION BUTTONS
+        const adminActions = isAdmin ? `
+            <button
+                class="btn btn-sm btn-warning me-1 edit-item"
+                data-id="${id}">
+                Edit
+            </button>
+
+            <button
+                class="btn btn-sm btn-danger delete-item"
+                data-id="${id}">
+                Delete
+            </button>
+        ` : `
+            <span class="text-muted">View Only</span>
+        `;
+
         return `
             <tr>
                 <td>${escapeHTML(item.item_name)}</td>
@@ -224,19 +331,7 @@ function displayItems() {
                 <td>${Number(item.quantity ?? 0)}</td>
                 <td>${getAvailableQuantity(item)}</td>
                 <td>${getStatusBadge(status)}</td>
-                <td>
-                    <button
-                        class="btn btn-sm btn-warning me-1 edit-item"
-                        data-id="${id}">
-                        Edit
-                    </button>
-
-                    <button
-                        class="btn btn-sm btn-danger delete-item"
-                        data-id="${id}">
-                        Delete
-                    </button>
-                </td>
+                <td>${adminActions}</td>
             </tr>
         `;
     }).join("");
@@ -259,69 +354,79 @@ clearFiltersButton.addEventListener("click", function () {
 });
 
 
-// ADD NEW ITEM
-addItemForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+// ADD NEW ITEM - ADMIN ONLY
+if (addItemForm) {
+    addItemForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    const itemName = document.getElementById("item_name").value.trim();
-    const category = document.getElementById("category").value;
-    const quantity = Number(document.getElementById("quantity").value);
-
-    if (!itemName || !category || !Number.isInteger(quantity) || quantity < 0) {
-        alert("Please enter valid item information.");
-        return;
-    }
-
-    saveItemButton.disabled = true;
-    saveItemButton.textContent = "Saving...";
-
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                item_name: itemName,
-                category: category,
-                quantity: quantity,
-                available_quantity: quantity,
-                status: quantity > 0 ? "Available" : "Unavailable"
-            })
-        });
-
-        const result = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            throw new Error(result.message || "Failed to add item.");
+        if (!isAdmin) {
+            alert("Only Admin can add inventory items.");
+            return;
         }
 
-        alert("Item added successfully!");
+        const itemName = document.getElementById("item_name").value.trim();
+        const category = document.getElementById("category").value;
+        const quantity = Number(document.getElementById("quantity").value);
 
-        addItemForm.reset();
-        addModal.hide();
+        if (!itemName || !category ||
+            !Number.isInteger(quantity) || quantity < 0) {
+            alert("Please enter valid item information.");
+            return;
+        }
 
-        await loadItems();
+        saveItemButton.disabled = true;
+        saveItemButton.textContent = "Saving...";
 
-    } catch (error) {
-        console.error("Add item error:", error);
-        alert(error.message);
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: getAuthHeaders(true),
+                body: JSON.stringify({
+                    item_name: itemName,
+                    category: category,
+                    quantity: quantity,
+                    available_quantity: quantity,
+                    status: quantity > 0 ? "Available" : "Unavailable"
+                })
+            });
 
-    } finally {
-        saveItemButton.disabled = false;
-        saveItemButton.textContent = "Save Item";
-    }
-});
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to add item.");
+            }
+
+            alert("Item added successfully!");
+
+            addItemForm.reset();
+            addModal.hide();
+
+            await loadItems();
+
+        } catch (error) {
+            console.error("Add item error:", error);
+            alert(error.message);
+
+        } finally {
+            saveItemButton.disabled = false;
+            saveItemButton.textContent = "Save Item";
+        }
+    });
+}
 
 
-// EDIT ITEM - OPEN MODAL
+// EDIT ITEM - ADMIN ONLY
 itemsTableBody.addEventListener("click", function (event) {
     const editButton = event.target.closest(".edit-item");
 
     if (!editButton) return;
 
-    const itemId = editButton.dataset.id;
+    if (!isAdmin) {
+        alert("Only Admin can edit inventory items.");
+        return;
+    }
 
+    const itemId = editButton.dataset.id;
     const item = allItems.find(item => String(item._id) === itemId);
 
     if (!item) {
@@ -338,64 +443,78 @@ itemsTableBody.addEventListener("click", function (event) {
 });
 
 
-// UPDATE ITEM
-editItemForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+// UPDATE ITEM - ADMIN ONLY
+if (editItemForm) {
+    editItemForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    const itemId = document.getElementById("editItemId").value;
-    const itemName = document.getElementById("edit_item_name").value.trim();
-    const category = document.getElementById("edit_category").value;
-    const quantity = Number(document.getElementById("edit_quantity").value);
-
-    if (!itemName || !category || !Number.isInteger(quantity) || quantity < 0) {
-        alert("Please enter valid item information.");
-        return;
-    }
-
-    updateItemButton.disabled = true;
-    updateItemButton.textContent = "Updating...";
-
-    try {
-        const response = await fetch(`${API_URL}/${encodeURIComponent(itemId)}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                item_name: itemName,
-                category: category,
-                quantity: quantity
-            })
-        });
-
-        const result = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            throw new Error(result.message || "Failed to update item.");
+        if (!isAdmin) {
+            alert("Only Admin can update inventory items.");
+            return;
         }
 
-        alert("Item updated successfully!");
+        const itemId = document.getElementById("editItemId").value;
+        const itemName = document.getElementById("edit_item_name").value.trim();
+        const category = document.getElementById("edit_category").value;
+        const quantity = Number(document.getElementById("edit_quantity").value);
 
-        editModal.hide();
+        if (!itemName || !category ||
+            !Number.isInteger(quantity) || quantity < 0) {
+            alert("Please enter valid item information.");
+            return;
+        }
 
-        await loadItems();
+        updateItemButton.disabled = true;
+        updateItemButton.textContent = "Updating...";
 
-    } catch (error) {
-        console.error("Update item error:", error);
-        alert(error.message);
+        try {
+            const response = await fetch(
+                `${API_URL}/${encodeURIComponent(itemId)}`,
+                {
+                    method: "PUT",
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({
+                        item_name: itemName,
+                        category: category,
+                        quantity: quantity
+                    })
+                }
+            );
 
-    } finally {
-        updateItemButton.disabled = false;
-        updateItemButton.textContent = "Update Item";
-    }
-});
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to update item.");
+            }
+
+            alert("Item updated successfully!");
+
+            editModal.hide();
+
+            await loadItems();
+
+        } catch (error) {
+            console.error("Update item error:", error);
+            alert(error.message);
+
+        } finally {
+            updateItemButton.disabled = false;
+            updateItemButton.textContent = "Update Item";
+        }
+    });
+}
 
 
-// DELETE ITEM
+// DELETE ITEM - ADMIN ONLY
 itemsTableBody.addEventListener("click", async function (event) {
     const deleteButton = event.target.closest(".delete-item");
 
     if (!deleteButton) return;
+
+    if (!isAdmin) {
+        alert("Only Admin can delete inventory items.");
+        return;
+    }
 
     const itemId = deleteButton.dataset.id;
 
@@ -407,9 +526,13 @@ itemsTableBody.addEventListener("click", async function (event) {
     deleteButton.textContent = "Deleting...";
 
     try {
-        const response = await fetch(`${API_URL}/${encodeURIComponent(itemId)}`, {
-            method: "DELETE"
-        });
+        const response = await fetch(
+            `${API_URL}/${encodeURIComponent(itemId)}`,
+            {
+                method: "DELETE",
+                headers: getAuthHeaders()
+            }
+        );
 
         const result = await response.json().catch(() => ({}));
 
@@ -442,5 +565,23 @@ document.querySelector(".logout-link")?.addEventListener("click", function (even
 });
 
 
-// LOAD INVENTORY WHEN PAGE OPENS
-loadItems();
+// INITIALIZE INVENTORY PAGE
+async function initializeInventoryPage() {
+    const authorized = await verifyUser();
+
+    if (!authorized) return;
+
+    if (isAdmin) {
+        if (addModalElement) {
+            addModal = bootstrap.Modal.getOrCreateInstance(addModalElement);
+        }
+
+        if (editModalElement) {
+            editModal = bootstrap.Modal.getOrCreateInstance(editModalElement);
+        }
+    }
+
+    await loadItems();
+}
+
+initializeInventoryPage();

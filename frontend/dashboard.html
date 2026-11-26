@@ -6,117 +6,557 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#203F65">
 
-    <title>EVENT-UALLY DONE | Dashboard</title>
+    <title>Dashboard | EVENT-UALLY DONE</title>
 
-    <!-- PWA MANIFEST -->
     <link rel="manifest" href="/manifest.json">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        :root {
+            --navy: #203F65;
+            --navy-dark: #142D49;
+            --blue: #315C89;
+            --gold: #FFCA28;
+            --background: #F3F6FB;
+            --text: #263445;
+            --muted: #8290A1;
+            --border: #E5ECF4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #F3F5F8;
-            font-family: Arial, sans-serif;
-            color: #212529;
             margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
         }
 
         /* SIDEBAR */
         .sidebar {
-            background-color: #203F65;
-            color: white;
             min-height: 100vh;
-            padding: 25px 15px;
+            padding: 30px 18px;
+            color: white;
+            background: linear-gradient(180deg, var(--navy), var(--navy-dark));
         }
 
-        .sidebar h4 {
-            color: #FFFFFF;
-            font-weight: bold;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 43px;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: rgba(255, 202, 40, .15);
+            border: 1px solid rgba(255, 202, 40, .35);
+            color: var(--gold);
+            font-size: 21px;
+        }
+
+        .brand-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 13px;
+            color: #9FB2C9;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
         }
 
         .sidebar a {
-            display: block;
-            padding: 12px;
-            color: #FFFFFF;
-            text-decoration: none;
-            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
             margin-bottom: 8px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #E7EEF7;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
         }
 
-        .sidebar a:hover,
+        .sidebar a i {
+            width: 19px;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, .10);
+            color: var(--gold);
+            transform: translateX(3px);
+        }
+
         .sidebar a.active {
-            background-color: #162F4D;
-            color: #FFFFFF;
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 800;
+            box-shadow: 0 5px 14px rgba(0, 0, 0, .13);
         }
 
-        /* MAIN CONTENT */
+        .sidebar-bottom {
+            margin-top: 55px;
+            padding: 17px 13px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .09);
+        }
+
+        .sidebar-bottom p {
+            color: #D1DDEB;
+            font-size: 11px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* MAIN */
         .main-content {
-            padding: 30px;
+            padding: 35px 38px;
         }
 
-        .main-content h2,
-        .main-content h4 {
-            color: #203F65;
-            font-weight: bold;
+        /* TOP BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 27px;
         }
 
-        /* DASHBOARD CARDS */
-        .stat-card {
-            background-color: #FFFFFF;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        .page-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
         }
 
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #203F65;
+        .page-title {
+            color: var(--navy);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0;
         }
 
-        .stat-card h6 {
-            color: #495057;
-            font-weight: bold;
+        .topbar-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: var(--navy);
+            font-size: 11px;
+            font-weight: 700;
         }
 
-        /* USER BADGE */
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22A06B;
+        }
+
+        /* WELCOME */
+        .welcome-header {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            margin-bottom: 25px;
+            border-radius: 19px;
+            color: white;
+            background: linear-gradient(115deg, #172F4C, #203F65 58%, #3B6896);
+            box-shadow: 0 10px 25px rgba(32, 63, 101, .13);
+        }
+
+        .welcome-header::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -75px;
+            top: -120px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 50%;
+        }
+
+        .welcome-header::after {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            right: -40px;
+            top: -85px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 50%;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-eyebrow {
+            color: #FFDA70;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-header h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .welcome-header p {
+            max-width: 540px;
+            color: #DCE7F3;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 0;
+        }
+
         .user-badge {
-            background-color: #203F65;
-            color: #FFFFFF;
-            padding: 10px 15px;
-            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 16px;
+            border-radius: 30px;
+            background: var(--gold);
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+        }
+
+        .user-badge i {
+            font-size: 16px;
         }
 
         /* MESSAGE */
         #message {
-            border-radius: 8px;
+            padding: 13px 17px;
+            border: none;
+            border-radius: 11px;
+            font-size: 12px;
         }
 
-        /* BUTTONS */
-        .btn-primary {
-            background-color: #203F65;
-            border-color: #203F65;
+        /* SECTION TITLE */
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 29px 0 16px;
         }
 
-        .btn-primary:hover {
-            background-color: #162F4D;
-            border-color: #162F4D;
+        .section-heading h5 {
+            color: var(--navy);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            margin: 0;
         }
 
-        .logout-link {
-            cursor: pointer;
+        .section-heading span {
+            color: var(--muted);
+            font-size: 11px;
         }
 
-        /* MOBILE */
-        @media (max-width: 768px) {
+        /* STAT CARDS */
+        .stat-card {
+            position: relative;
+            height: 100%;
+            padding: 22px;
+            overflow: hidden;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 14px rgba(32, 63, 101, .04);
+            transition: .25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(32, 63, 101, .09);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 20px;
+        }
+
+        .icon-inventory {
+            color: #315C89;
+            background: #EAF1FA;
+        }
+
+        .icon-reservation {
+            color: #B27A00;
+            background: #FFF5D9;
+        }
+
+        .icon-system {
+            color: #16875B;
+            background: #E4F6ED;
+        }
+
+        .stat-caption {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+        }
+
+        .stat-card h3 {
+            color: var(--navy);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .stat-card .stat-description {
+            color: #97A3B2;
+            font-size: 11px;
+            margin-top: 7px;
+            margin-bottom: 0;
+        }
+
+        .system-active {
+            color: #16875B !important;
+            font-size: 25px !important;
+        }
+
+        /* QUICK ACCESS */
+        .quick-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            height: 100%;
+            padding: 20px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-3px);
+            border-color: #C9D7E8;
+            box-shadow: 0 8px 20px rgba(32, 63, 101, .08);
+        }
+
+        .quick-icon {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            color: var(--navy);
+            background: #EAF1FA;
+            font-size: 21px;
+        }
+
+        .quick-card h6 {
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .quick-card p {
+            color: var(--muted);
+            font-size: 10px;
+            margin: 0;
+        }
+
+        .quick-arrow {
+            margin-left: auto;
+            color: #9AA9BA;
+            font-size: 17px;
+        }
+
+        /* SYSTEM OVERVIEW */
+        .overview-card {
+            padding: 24px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 14px rgba(32, 63, 101, .04);
+        }
+
+        .overview-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 14px;
+        }
+
+        .overview-title i {
+            color: #C58A00;
+            font-size: 19px;
+        }
+
+        .overview-title h5 {
+            color: var(--navy);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .overview-card > p {
+            color: #718096;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        #apiStatus {
+            padding: 13px 15px;
+            margin: 0;
+            border-radius: 10px;
+            color: var(--navy);
+            background: #EDF3FA;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* FOOTER */
+        .page-footer {
+            padding: 22px 0 5px;
+            color: #9AA6B5;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 767px) {
             .sidebar {
                 min-height: auto;
+                padding: 19px 16px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .nav-label {
+                margin-top: 12px;
+            }
+
+            .sidebar a {
+                display: inline-flex;
+                width: calc(50% - 7px);
+                justify-content: center;
+                padding: 12px 8px;
+                margin: 0 3px 7px 0;
+                font-size: 12px;
+            }
+
+            .sidebar a:hover {
+                transform: none;
+            }
+
+            .sidebar-bottom {
+                margin-top: 14px;
             }
 
             .main-content {
-                padding: 20px 15px;
+                padding: 23px 16px;
+            }
+
+            .topbar {
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 19px;
+            }
+
+            .welcome-header {
+                padding: 25px 21px;
+            }
+
+            .welcome-header h2 {
+                font-size: 23px;
+            }
+
+            .user-badge {
+                margin-top: 17px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .stat-card h3 {
+                font-size: 29px;
+            }
+
+            .overview-card {
+                padding: 19px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .topbar-tag {
+                padding: 8px 10px;
+                font-size: 9px;
+            }
+
+            .welcome-header h2 {
+                font-size: 21px;
             }
         }
     </style>
@@ -128,30 +568,111 @@
     <div class="row">
 
         <!-- SIDEBAR -->
-        <div class="col-md-2 sidebar">
-            <h4>EVENT-UALLY DONE</h4>
+        <aside class="col-md-3 col-lg-2 sidebar">
 
-            <a href="/dashboard" class="active">Dashboard</a>
-            <a href="/items.html">Inventory</a>
-            <a href="/reservations.html">Reservations</a>
-            <a href="#" class="logout-link" id="logoutLink">Logout</a>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="col-md-10 main-content">
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2>Dashboard</h2>
-                    <p class="text-muted">
-                        Welcome to EVENT-UALLY DONE!
-                    </p>
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="bi bi-calendar2-check"></i>
                 </div>
 
-                <span id="userName" class="user-badge">
-                    Guest
-                </span>
+                <div class="brand-name">
+                    EVENT-UALLY<br>DONE
+                </div>
             </div>
+
+            <div class="nav-label">MAIN MENU</div>
+
+            <a href="/dashboard" class="active">
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+
+            <a href="/items.html">
+                <i class="bi bi-box-seam"></i>
+                Inventory
+            </a>
+
+            <a href="/reservations.html">
+                <i class="bi bi-calendar-check"></i>
+                Reservations
+            </a>
+
+            <a href="/checklists.html">
+                <i class="bi bi-list-check"></i>
+                Checklists
+            </a>
+
+            <div class="nav-label mt-4">ACCOUNT</div>
+
+            <a href="/profile.html">
+                <i class="bi bi-person-circle"></i>
+                My Profile
+            </a>
+
+            <a href="#" class="logout-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i>
+                Logout
+            </a>
+
+            <div class="sidebar-bottom">
+                <p>
+                    <i class="bi bi-shield-check me-1"></i>
+                    EVENT-UALLY DONE
+                    <br>
+                    Event Inventory and Reservation Management System
+                </p>
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-9 col-lg-10 main-content">
+
+            <!-- TOP BAR -->
+            <div class="topbar">
+
+                <div>
+                    <div class="page-label">Workspace / Overview</div>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+
+                <div class="topbar-tag">
+                    <span class="online-dot"></span>
+                    Management System
+                </div>
+
+            </div>
+
+            <!-- WELCOME -->
+            <section class="welcome-header">
+
+                <div class="welcome-content">
+
+                    <div class="welcome-eyebrow">
+                        EVENT HANDLERS • MANAGEMENT PORTAL
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+                            <h2>Welcome to Dashboard!</h2>
+
+                            <p>
+                                Manage your school events, equipment, and reservations
+                                in one organized platform.
+                            </p>
+                        </div>
+
+                        <span id="userName" class="user-badge">
+                            <i class="bi bi-person-circle"></i>
+                            Guest
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
 
             <!-- MESSAGE -->
             <div id="message" class="alert alert-info">
@@ -159,52 +680,201 @@
             </div>
 
             <!-- STATISTICS -->
+            <div class="section-heading">
+                <h5>System Overview</h5>
+                <span>Live dashboard statistics</span>
+            </div>
+
             <div class="row g-3 mb-4">
 
                 <div class="col-md-4">
-                    <div class="card stat-card p-4">
-                        <h6>Total Inventory Items</h6>
-                        <div class="stat-number" id="totalItems">0</div>
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+                            <div class="stat-icon icon-inventory">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                            <span class="stat-caption">Inventory</span>
+                        </div>
+
+                        <h3 id="totalItems">0</h3>
+
+                        <p class="stat-description">
+                            Total inventory items
+                        </p>
+
                     </div>
+
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card stat-card p-4">
-                        <h6>Total Reservations</h6>
-                        <div class="stat-number" id="totalReservations">0</div>
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+                            <div class="stat-icon icon-reservation">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+
+                            <span class="stat-caption">Reservations</span>
+                        </div>
+
+                        <h3 id="totalReservations">0</h3>
+
+                        <p class="stat-description">
+                            Total reservation records
+                        </p>
+
                     </div>
+
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card stat-card p-4">
-                        <h6>System Status</h6>
-                        <div class="stat-number text-success">Active</div>
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+                            <div class="stat-icon icon-system">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <span class="stat-caption">System Status</span>
+                        </div>
+
+                        <h3 class="system-active">Active</h3>
+
+                        <p class="stat-description">
+                            Application availability
+                        </p>
+
                     </div>
+
                 </div>
 
             </div>
 
-            <!-- SYSTEM OVERVIEW -->
-            <div class="card stat-card p-4">
-                <h4>System Overview</h4>
+            <!-- QUICK ACCESS -->
+            <div class="section-heading">
+                <h5>Quick Access</h5>
+                <span>Navigate to system features</span>
+            </div>
 
-                <p class="text-muted">
-                    Manage your event equipment, inventory, and reservations here.
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <a href="/items.html" class="quick-card">
+
+                        <div class="quick-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+
+                        <div>
+                            <h6>Inventory Management</h6>
+                            <p>View and manage equipment records</p>
+                        </div>
+
+                        <i class="bi bi-arrow-right quick-arrow"></i>
+
+                    </a>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <a href="/reservations.html" class="quick-card">
+
+                        <div class="quick-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div>
+                            <h6>Reservation Management</h6>
+                            <p>Monitor event reservation records</p>
+                        </div>
+
+                        <i class="bi bi-arrow-right quick-arrow"></i>
+
+                    </a>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <a href="/checklists.html" class="quick-card">
+
+                        <div class="quick-icon">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+
+                        <div>
+                            <h6>Event Checklists</h6>
+                            <p>Organize event preparation tasks</p>
+                        </div>
+
+                        <i class="bi bi-arrow-right quick-arrow"></i>
+
+                    </a>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <a href="/profile.html" class="quick-card">
+
+                        <div class="quick-icon">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+
+                        <div>
+                            <h6>My Profile</h6>
+                            <p>View your account information</p>
+                        </div>
+
+                        <i class="bi bi-arrow-right quick-arrow"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- SYSTEM INFORMATION -->
+            <section class="overview-card">
+
+                <div class="overview-title">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <h5>System Information</h5>
+                </div>
+
+                <p>
+                    EVENT-UALLY DONE is an Event Inventory and Reservation
+                    Management System designed to help organize school event
+                    equipment, monitor available resources, and manage
+                    reservation activities efficiently.
                 </p>
 
                 <p id="apiStatus">
+                    <i class="bi bi-arrow-repeat me-2"></i>
                     Checking API connection...
                 </p>
+
+            </section>
+
+            <div class="page-footer">
+                &copy; 2026 EVENT-UALLY DONE | Developed by Event Handlers
             </div>
 
-        </div>
+        </main>
+
     </div>
 </div>
 
-<!-- EXTERNAL JAVASCRIPT FILES -->
+<!-- EXTERNAL JAVASCRIPT -->
 <script src="/js/dashboard.js" defer></script>
 <script src="/js/pwa.js" defer></script>
 
 </body>
 </html>
-

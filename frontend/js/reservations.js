@@ -1,358 +1,544 @@
 
-const API_BASE = `${window.location.origin}/api`;
+const API_BASE = "/api";
+const TOKEN = localStorage.getItem("token");
 
+let currentUser = null;
+let currentRole = "";
 let inventoryItems = [];
 
-// LOAD INVENTORY ITEMS
-async function loadItems() {
-    const select = document.getElementById("itemSelect");
+try {
+    currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    currentRole = currentUser?.role || "";
+} catch (error) {
+    console.error("Unable to read logged-in user:", error);
+}
 
+const isStudent = currentRole === "Student";
+const isOrganizer = currentRole === "Event Organizer";
+const isAdmin = currentRole === "Admin";
+
+const reservationTable = document.getElementById("reservationTable");
+const reservationForm = document.getElementById("reservationForm");
+const editReservationForm = document.getElementById("editReservationForm");
+
+const itemSelect = document.getElementById("itemSelect");
+const editItemSelect = document.getElementById("editItemSelect");
+
+const stockInfo = document.getElementById("stockInfo");
+const quantityInput = document.getElementById("quantityInput");
+
+const formMessage = document.getElementById("formMessage");
+const editFormMessage = document.getElementById("editFormMessage");
+
+const submitButton = document.getElementById("submitButton");
+const updateReservationButton = document.getElementById("updateReservationButton");
+
+const addReservationModalElement = document.getElementById("addReservationModal");
+const editReservationModalElement = document.getElementById("editReservationModal");
+
+const addReservationModal = bootstrap.Modal.getOrCreateInstance(addReservationModalElement);
+const editReservationModal = bootstrap.Modal.getOrCreateInstance(editReservationModalElement);
+
+// ==========================================
+// AUTHENTICATION
+// ==========================================
+
+if (!TOKEN || !currentUser) {
+    window.location.replace("/login.html");
+}
+
+function getHeaders() {
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TOKEN}`
+    };
+}
+
+function handleUnauthorized() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.replace("/login.html");
+}
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+
+        return entities[character];
+    });
+}
+
+function getUserId(user) {
+    if (!user) return "";
+    return String(user._id || user.id || "");
+}
+
+function getReservationOwnerId(reservation) {
+    if (!reservation.user) return "";
+
+    if (typeof reservation.user === "object") {
+        return String(reservation.user._id || reservation.user.id || "");
+    }
+
+    return String(reservation.user);
+}
+
+function isReservationOwner(reservation) {
+    return getReservationOwnerId(reservation) === getUserId(currentUser);
+}
+
+function showMessage(element, message, type = "danger") {
+    if (!element) return;
+
+    element.innerHTML = `
+        <div class="alert alert-${type} py-2">
+            ${escapeHTML(message)}
+        </div>
+    `;
+}
+
+function clearMessage(element) {
+    if (element) element.innerHTML = "";
+}
+
+function formatDate(date) {
+    if (!date) return "N/A";
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) return "N/A";
+
+    return parsedDate.toLocaleDateString("en-PH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
+
+function getItemName(reservation) {
+    if (reservation.item && typeof reservation.item === "object") {
+        return reservation.item.item_name || "Unknown Item";
+    }
+
+    const item = inventoryItems.find(
+        entry => String(entry._id) === String(reservation.item)
+    );
+
+    return item ? item.item_name : "Unknown Item";
+}
+
+// ==========================================
+// ROLE-BASED NAVIGATION
+// ==========================================
+
+function setupRoleNavigation() {
+    const navigation = document.querySelector(".page-navigation");
+    if (!navigation) return;
+
+    const links = navigation.querySelectorAll("a");
+
+    links.forEach(link => {
+        const href = link.getAttribute("href");
+
+        if (isStudent && href === "/checklists.html") {
+            link.remove();
+        }
+
+        if (href === "/dashboard") {
+            if (isStudent) link.href = "/student-dashboard.html";
+            else if (isOrganizer) link.href = "/organizer-dashboard.html";
+            else if (isAdmin) link.href = "/admin-dashboard.html";
+        }
+    });
+
+    const newReservationButton = document.querySelector(
+        '[data-bs-target="#addReservationModal"]'
+    );
+
+    if (newReservationButton) {
+        newReservationButton.style.display = "inline-block";
+        newReservationButton.textContent = "+ New Reservation";
+    }
+
+    const pageTitle = document.querySelector(".page-header h2");
+
+    if (pageTitle) {
+        if (isStudent) pageTitle.textContent = "My Reservations";
+        else if (isOrganizer) pageTitle.textContent = "Manage Reservations";
+        else if (isAdmin) pageTitle.textContent = "All Reservations";
+    }
+}
+
+// ==========================================
+// LOAD INVENTORY ITEMS
+// ==========================================
+
+async function loadInventoryItems() {
     try {
         const response = await fetch(`${API_BASE}/items`);
 
         if (!response.ok) {
-            throw new Error("Failed to load inventory.");
+            throw new Error("Unable to load inventory items.");
         }
 
         inventoryItems = await response.json();
 
-        select.innerHTML = '<option value="">Select an item</option>';
-
-        const availableItems = inventoryItems.filter(item =>
-            Number(item.available_quantity) > 0 &&
-            item.status !== "Unavailable"
-        );
-
-        if (availableItems.length === 0) {
-            select.innerHTML =
-                '<option value="">No available items</option>';
-            return;
+        if (!Array.isArray(inventoryItems)) {
+            throw new Error("Invalid inventory data.");
         }
 
-        availableItems.forEach(item => {
-            const option = document.createElement("option");
-
-            option.value = item._id;
-            option.textContent =
-                `${item.item_name} (${item.available_quantity} available)`;
-
-            select.appendChild(option);
-        });
+        populateItemDropdowns();
 
     } catch (error) {
         console.error("Inventory loading error:", error);
 
-        select.innerHTML =
-            '<option value="">Unable to load inventory</option>';
+        if (itemSelect) {
+            itemSelect.innerHTML = `
+                <option value="">Unable to load inventory</option>
+            `;
+        }
     }
 }
 
+function populateItemDropdowns() {
+    const options = inventoryItems.map(item => {
+        const available = Number(item.available_quantity || 0);
 
-// UPDATE STOCK INFORMATION IN ADD FORM
-document.getElementById("itemSelect").addEventListener("change", function() {
+        return `
+            <option value="${escapeHTML(item._id)}"
+                    ${available < 1 ? "disabled" : ""}>
+                ${escapeHTML(item.item_name)}
+                (${available} available)
+            </option>
+        `;
+    }).join("");
+
+    if (itemSelect) {
+        itemSelect.innerHTML = `
+            <option value="">Select an inventory item</option>
+            ${options}
+        `;
+    }
+
+    if (editItemSelect) {
+        editItemSelect.innerHTML = `
+            <option value="">Select an inventory item</option>
+            ${options}
+        `;
+    }
+}
+
+// ==========================================
+// STOCK INFORMATION
+// ==========================================
+
+function updateStockInfo() {
+    const selectedId = itemSelect.value;
+
     const selectedItem = inventoryItems.find(
-        item => item._id === this.value
+        item => String(item._id) === String(selectedId)
     );
 
-    const quantityInput = document.getElementById("quantityInput");
-    const stockInfo = document.getElementById("stockInfo");
-
-    if (selectedItem) {
-        quantityInput.max = selectedItem.available_quantity;
-
-        stockInfo.textContent =
-            `Available stock: ${selectedItem.available_quantity}`;
-
-        quantityInput.value = "";
-    } else {
-        quantityInput.removeAttribute("max");
+    if (!selectedItem) {
         stockInfo.textContent = "";
+        return;
     }
-});
 
+    stockInfo.textContent =
+        `Available stock: ${selectedItem.available_quantity}`;
+}
 
+if (itemSelect) {
+    itemSelect.addEventListener("change", updateStockInfo);
+}
+
+function updateEditStockInfo() {
+    const selectedId = editItemSelect.value;
+
+    const selectedItem = inventoryItems.find(
+        item => String(item._id) === String(selectedId)
+    );
+
+    const editStockInfo = document.getElementById("editStockInfo");
+
+    if (!selectedItem) {
+        editStockInfo.textContent = "";
+        return;
+    }
+
+    editStockInfo.textContent =
+        `Available stock: ${selectedItem.available_quantity}`;
+}
+
+if (editItemSelect) {
+    editItemSelect.addEventListener("change", updateEditStockInfo);
+}
+
+// ==========================================
 // LOAD RESERVATIONS
-async function loadReservations() {
-    const table = document.getElementById("reservationTable");
+// ==========================================
 
+async function loadReservations() {
     try {
-        const response = await fetch(`${API_BASE}/reservations`);
+        reservationTable.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    Loading reservations...
+                </td>
+            </tr>
+        `;
+
+        const response = await fetch(`${API_BASE}/reservations`, {
+            headers: getHeaders()
+        });
+
+        if (response.status === 401) {
+            handleUnauthorized();
+            return;
+        }
 
         if (!response.ok) {
-            throw new Error("Failed to load reservations.");
+            throw new Error("Unable to load reservations.");
         }
 
         const reservations = await response.json();
 
-        table.innerHTML = "";
-
-        if (!reservations.length) {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-
-            cell.colSpan = 6;
-            cell.className = "text-center text-muted";
-            cell.textContent = "No reservations found.";
-
-            row.appendChild(cell);
-            table.appendChild(row);
-            return;
+        if (!Array.isArray(reservations)) {
+            throw new Error("Invalid reservation data.");
         }
 
-        reservations.forEach(reservation => {
-            const row = document.createElement("tr");
-
-            const itemName =
-                reservation.item?.item_name || "Unknown Item";
-
-            const eventDate = reservation.event_date
-                ? new Date(reservation.event_date).toLocaleDateString()
-                : "N/A";
-
-            const values = [
-                reservation.event_name,
-                itemName,
-                reservation.quantity,
-                eventDate
-            ];
-
-            values.forEach(value => {
-                const cell = document.createElement("td");
-                cell.textContent = value ?? "N/A";
-                row.appendChild(cell);
-            });
-
-            // STATUS
-            const statusCell = document.createElement("td");
-            const badge = document.createElement("span");
-
-            const status = reservation.status || "Pending";
-
-            badge.className = `status ${status}`;
-            badge.textContent = status;
-
-            statusCell.appendChild(badge);
-            row.appendChild(statusCell);
-
-            // ACTIONS
-            const actionCell = document.createElement("td");
-
-            const editButton = document.createElement("button");
-            editButton.type = "button";
-            editButton.className = "btn btn-sm btn-warning me-1";
-            editButton.textContent = "Edit";
-
-            editButton.addEventListener("click", () => {
-                editReservation(reservation._id);
-            });
-
-            const deleteButton = document.createElement("button");
-            deleteButton.type = "button";
-            deleteButton.className = "btn btn-sm btn-danger";
-            deleteButton.textContent = "Delete";
-
-            deleteButton.addEventListener("click", () => {
-                deleteReservation(reservation._id);
-            });
-
-            actionCell.appendChild(editButton);
-            actionCell.appendChild(deleteButton);
-
-            row.appendChild(actionCell);
-            table.appendChild(row);
-        });
+        displayReservations(reservations);
 
     } catch (error) {
         console.error("Reservation loading error:", error);
 
-        table.innerHTML = `
+        reservationTable.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center text-danger">
-                    Unable to load reservations. Check your server.
+                <td colspan="6" class="text-center text-danger py-4">
+                    ${escapeHTML(error.message)}
                 </td>
             </tr>
         `;
     }
 }
 
+// ==========================================
+// DISPLAY RESERVATIONS
+// CSP-SAFE BUTTONS: NO INLINE ONCLICK
+// ==========================================
 
-// SUBMIT NEW RESERVATION
-document.getElementById("reservationForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const form = this;
-    const submitButton = document.getElementById("submitButton");
-    const message = document.getElementById("formMessage");
-    const formData = new FormData(form);
-
-    const selectedItem = inventoryItems.find(
-        item => item._id === formData.get("item")
-    );
-
-    const quantity = Number(formData.get("quantity"));
-
-    if (!selectedItem) {
-        message.innerHTML = `
-            <div class="alert alert-danger">
-                Please select an inventory item.
-            </div>
+function displayReservations(reservations) {
+    if (!reservations.length) {
+        reservationTable.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4 text-muted">
+                    No reservations found.
+                </td>
+            </tr>
         `;
         return;
     }
 
-    if (
-        !Number.isInteger(quantity) ||
-        quantity < 1 ||
-        quantity > Number(selectedItem.available_quantity)
-    ) {
-        message.innerHTML = `
-            <div class="alert alert-danger">
-                Invalid quantity. Please check available stock.
-            </div>
-        `;
-        return;
-    }
+    reservationTable.innerHTML = reservations.map(reservation => {
+        const status = reservation.status || "Pending";
+        let actions = "";
 
-    const reservationData = {
-        event_name: formData.get("event_name"),
-        item: formData.get("item"),
-        quantity: quantity,
-        event_date: formData.get("event_date"),
-        description: formData.get("description")
-    };
+        if (isAdmin) {
+            actions = `
+                <button type="button"
+                        class="btn btn-sm btn-primary mb-1"
+                        data-action="edit"
+                        data-id="${escapeHTML(reservation._id)}">
+                    Edit
+                </button>
 
-    try {
-        submitButton.disabled = true;
-        submitButton.textContent = "Submitting...";
-        message.innerHTML = "";
+                <button type="button"
+                        class="btn btn-sm btn-danger mb-1"
+                        data-action="delete"
+                        data-id="${escapeHTML(reservation._id)}">
+                    Delete
+                </button>
+            `;
+        } else if (
+            isOrganizer &&
+            isReservationOwner(reservation) &&
+            status === "Pending"
+        ) {
+            actions = `
+                <button type="button"
+                        class="btn btn-sm btn-primary mb-1"
+                        data-action="edit"
+                        data-id="${escapeHTML(reservation._id)}">
+                    Edit
+                </button>
 
-        const response = await fetch(`${API_BASE}/reservations`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(reservationData)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || "Reservation failed.");
+                <button type="button"
+                        class="btn btn-sm btn-danger mb-1"
+                        data-action="delete"
+                        data-id="${escapeHTML(reservation._id)}">
+                    Delete
+                </button>
+            `;
+        } else if (isStudent) {
+            actions = `
+                <span class="badge bg-secondary">View Only</span>
+            `;
+        } else {
+            actions = `
+                <span class="text-muted small">No actions available</span>
+            `;
         }
 
-        message.innerHTML = `
-            <div class="alert alert-success">
-                Reservation submitted successfully!
-            </div>
+        return `
+            <tr>
+                <td>${escapeHTML(reservation.event_name)}</td>
+                <td>${escapeHTML(getItemName(reservation))}</td>
+                <td>${escapeHTML(reservation.quantity)}</td>
+                <td>${escapeHTML(formatDate(reservation.event_date))}</td>
+                <td>
+                    <span class="status ${escapeHTML(status)}">
+                        ${escapeHTML(status)}
+                    </span>
+                </td>
+                <td>${actions}</td>
+            </tr>
         `;
-
-        form.reset();
-
-        document.getElementById("stockInfo").textContent = "";
-        document.getElementById("quantityInput").removeAttribute("max");
-
-        await loadItems();
-        await loadReservations();
-
-        setTimeout(() => {
-            const modalElement =
-                document.getElementById("addReservationModal");
-
-            const modal =
-                bootstrap.Modal.getInstance(modalElement);
-
-            if (modal) {
-                modal.hide();
-            }
-
-            message.innerHTML = "";
-        }, 1000);
-
-    } catch (error) {
-        message.innerHTML = "";
-
-        const alertBox = document.createElement("div");
-        alertBox.className = "alert alert-danger";
-        alertBox.textContent = error.message;
-
-        message.appendChild(alertBox);
-
-        console.error("Reservation submission error:", error);
-
-    } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit Reservation";
-    }
-});
-
-
-// LOAD INVENTORY OPTIONS FOR EDIT MODAL
-function loadEditItemOptions(selectedItemId) {
-    const select = document.getElementById("editItemSelect");
-
-    select.innerHTML = '<option value="">Select an item</option>';
-
-    inventoryItems.forEach(item => {
-        const option = document.createElement("option");
-
-        option.value = item._id;
-        option.textContent =
-            `${item.item_name} (${item.available_quantity} available)`;
-
-        select.appendChild(option);
-    });
-
-    select.value = selectedItemId || "";
+    }).join("");
 }
 
+// ==========================================
+// CREATE RESERVATION
+// ==========================================
 
-// UPDATE EDIT STOCK INFORMATION
-document.getElementById("editItemSelect").addEventListener("change", function() {
-    const selectedItem = inventoryItems.find(
-        item => item._id === this.value
-    );
+if (reservationForm) {
+    reservationForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+        clearMessage(formMessage);
 
-    const quantityInput = document.getElementById("editQuantity");
-    const stockInfo = document.getElementById("editStockInfo");
+        const formData = new FormData(reservationForm);
 
-    if (selectedItem) {
-        quantityInput.max = selectedItem.available_quantity;
+        const reservationData = {
+            event_name: formData.get("event_name").trim(),
+            item: formData.get("item"),
+            quantity: Number(formData.get("quantity")),
+            event_date: formData.get("event_date"),
+            description: formData.get("description").trim()
+        };
 
-        stockInfo.textContent =
-            `Available stock: ${selectedItem.available_quantity}`;
-    } else {
-        quantityInput.removeAttribute("max");
-        stockInfo.textContent = "";
-    }
-});
-
-
-// EDIT RESERVATION
-async function editReservation(id) {
-    try {
-        const response = await fetch(`${API_BASE}/reservations/${id}`);
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || "Unable to get reservation.");
+        if (
+            !reservationData.event_name ||
+            !reservationData.item ||
+            !reservationData.event_date ||
+            !Number.isInteger(reservationData.quantity) ||
+            reservationData.quantity < 1
+        ) {
+            showMessage(formMessage, "Please complete all required fields.");
+            return;
         }
 
-        const reservation = result.reservation || result;
+        try {
+            submitButton.disabled = true;
+            submitButton.textContent = "Submitting...";
 
-        document.getElementById("editReservationId").value =
-            reservation._id;
+            const response = await fetch(`${API_BASE}/reservations`, {
+                method: "POST",
+                headers: getHeaders(),
+                body: JSON.stringify(reservationData)
+            });
 
-        document.getElementById("editEventName").value =
-            reservation.event_name || "";
+            const data = await response.json();
 
-        const itemId =
-            reservation.item?._id || reservation.item;
+            if (response.status === 401) {
+                handleUnauthorized();
+                return;
+            }
 
-        loadEditItemOptions(itemId);
+            if (!response.ok) {
+                throw new Error(data.message || "Reservation failed.");
+            }
 
-        document.getElementById("editQuantity").value =
-            reservation.quantity || 1;
+            showMessage(
+                formMessage,
+                "Reservation submitted successfully!",
+                "success"
+            );
+
+            reservationForm.reset();
+            if (stockInfo) stockInfo.textContent = "";
+
+            await loadReservations();
+
+            setTimeout(() => {
+                addReservationModal.hide();
+                clearMessage(formMessage);
+            }, 1000);
+
+        } catch (error) {
+            showMessage(formMessage, error.message);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = "Submit Reservation";
+        }
+    });
+}
+
+// ==========================================
+// EDIT RESERVATION
+// ==========================================
+
+async function editReservation(id) {
+    if (isStudent) {
+        alert("Students are not allowed to edit reservations.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/reservations/${encodeURIComponent(id)}`,
+            { headers: getHeaders() }
+        );
+
+        if (response.status === 401) {
+            handleUnauthorized();
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to open reservation.");
+        }
+
+        const reservation = data.reservation || data;
+
+        const canEditOrganizer =
+            isOrganizer &&
+            isReservationOwner(reservation) &&
+            reservation.status === "Pending";
+
+        if (!isAdmin && !canEditOrganizer) {
+            throw new Error("You are not allowed to edit this reservation.");
+        }
+
+        document.getElementById("editReservationId").value = reservation._id;
+        document.getElementById("editEventName").value = reservation.event_name || "";
+
+        const selectedItemId =
+            reservation.item?._id || reservation.item || "";
+
+        editItemSelect.value = selectedItemId;
+
+        document.getElementById("editQuantity").value = reservation.quantity || 1;
 
         document.getElementById("editEventDate").value =
             reservation.event_date
@@ -362,188 +548,188 @@ async function editReservation(id) {
         document.getElementById("editDescription").value =
             reservation.description || "";
 
-        document.getElementById("editStatus").value =
-            reservation.status || "Pending";
+        const statusSelect = document.getElementById("editStatus");
 
-        const selectedItem = inventoryItems.find(
-            item => item._id === itemId
-        );
+        statusSelect.value = reservation.status || "Pending";
 
-        document.getElementById("editStockInfo").textContent =
-            selectedItem
-                ? `Available stock: ${selectedItem.available_quantity}`
-                : "";
+        // Only Admin may change reservation status
+        statusSelect.disabled = !isAdmin;
 
-        // Keep the existing reservation quantity editable
-        // even if the current available quantity is lower.
-        const quantityInput = document.getElementById("editQuantity");
+        statusSelect.parentElement.style.display = isAdmin ? "block" : "none";
 
-        if (selectedItem) {
-            quantityInput.max = Math.max(
-                Number(selectedItem.available_quantity),
-                Number(reservation.quantity)
-            );
-        }
+        updateEditStockInfo();
+        clearMessage(editFormMessage);
 
-        document.getElementById("editFormMessage").innerHTML = "";
-
-        const modal = new bootstrap.Modal(
-            document.getElementById("editReservationModal")
-        );
-
-        modal.show();
+        editReservationModal.show();
 
     } catch (error) {
-        alert(error.message);
         console.error("Edit reservation error:", error);
+        alert(error.message);
     }
 }
 
-
+// ==========================================
 // SAVE EDITED RESERVATION
-document.getElementById("editReservationForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
+// ==========================================
 
-    const id = document.getElementById("editReservationId").value;
-    const button = document.getElementById("updateReservationButton");
-    const message = document.getElementById("editFormMessage");
+if (editReservationForm) {
+    editReservationForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
 
-    const selectedItemId =
-        document.getElementById("editItemSelect").value;
-
-    const selectedItem = inventoryItems.find(
-        item => item._id === selectedItemId
-    );
-
-    const quantity = Number(
-        document.getElementById("editQuantity").value
-    );
-
-    if (!selectedItem) {
-        message.innerHTML = `
-            <div class="alert alert-danger">
-                Please select an inventory item.
-            </div>
-        `;
-        return;
-    }
-
-    if (!Number.isInteger(quantity) || quantity < 1) {
-        message.innerHTML = `
-            <div class="alert alert-danger">
-                Quantity must be a positive whole number.
-            </div>
-        `;
-        return;
-    }
-
-    if (quantity > Number(document.getElementById("editQuantity").max)) {
-        message.innerHTML = `
-            <div class="alert alert-danger">
-                Quantity exceeds the allowed amount.
-            </div>
-        `;
-        return;
-    }
-
-    const updatedData = {
-        event_name: document.getElementById("editEventName").value.trim(),
-        item: selectedItemId,
-        quantity: quantity,
-        event_date: document.getElementById("editEventDate").value,
-        description: document.getElementById("editDescription").value,
-        status: document.getElementById("editStatus").value
-    };
-
-    try {
-        button.disabled = true;
-        button.textContent = "Saving...";
-
-        const response = await fetch(`${API_BASE}/reservations/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedData)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || "Failed to update reservation.");
+        if (isStudent) {
+            alert("Students are not allowed to edit reservations.");
+            return;
         }
 
-        alert("Reservation updated successfully!");
+        clearMessage(editFormMessage);
 
-        const modalElement =
-            document.getElementById("editReservationModal");
+        const id = document.getElementById("editReservationId").value;
 
-        const modal = bootstrap.Modal.getInstance(modalElement);
+        const reservationData = {
+            event_name: document.getElementById("editEventName").value.trim(),
+            item: editItemSelect.value,
+            quantity: Number(document.getElementById("editQuantity").value),
+            event_date: document.getElementById("editEventDate").value,
+            description: document.getElementById("editDescription").value.trim()
+        };
 
-        if (modal) {
-            modal.hide();
+        if (isAdmin) {
+            reservationData.status =
+                document.getElementById("editStatus").value;
         }
 
-        await loadReservations();
+        if (
+            !reservationData.event_name ||
+            !reservationData.item ||
+            !reservationData.event_date ||
+            !Number.isInteger(reservationData.quantity) ||
+            reservationData.quantity < 1
+        ) {
+            showMessage(editFormMessage, "Please complete all required fields.");
+            return;
+        }
 
-    } catch (error) {
-        message.innerHTML = "";
+        try {
+            updateReservationButton.disabled = true;
+            updateReservationButton.textContent = "Saving...";
 
-        const alertBox = document.createElement("div");
-        alertBox.className = "alert alert-danger";
-        alertBox.textContent = error.message;
+            const response = await fetch(
+                `${API_BASE}/reservations/${encodeURIComponent(id)}`,
+                {
+                    method: "PUT",
+                    headers: getHeaders(),
+                    body: JSON.stringify(reservationData)
+                }
+            );
 
-        message.appendChild(alertBox);
+            const data = await response.json();
 
-        console.error("Update reservation error:", error);
+            if (response.status === 401) {
+                handleUnauthorized();
+                return;
+            }
 
-    } finally {
-        button.disabled = false;
-        button.textContent = "Save Changes";
-    }
-});
+            if (!response.ok) {
+                throw new Error(data.message || "Unable to update reservation.");
+            }
 
+            showMessage(
+                editFormMessage,
+                "Reservation updated successfully!",
+                "success"
+            );
 
+            await loadReservations();
+
+            setTimeout(() => {
+                editReservationModal.hide();
+                clearMessage(editFormMessage);
+            }, 1000);
+
+        } catch (error) {
+            showMessage(editFormMessage, error.message);
+        } finally {
+            updateReservationButton.disabled = false;
+            updateReservationButton.textContent = "Save Changes";
+        }
+    });
+}
+
+// ==========================================
 // DELETE RESERVATION
+// ==========================================
+
 async function deleteReservation(id) {
+    if (isStudent) {
+        alert("Students are not allowed to delete reservations.");
+        return;
+    }
+
     const confirmed = confirm(
         "Are you sure you want to delete this reservation?"
     );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
-        const response = await fetch(`${API_BASE}/reservations/${id}`, {
-            method: "DELETE"
-        });
+        const response = await fetch(
+            `${API_BASE}/reservations/${encodeURIComponent(id)}`,
+            {
+                method: "DELETE",
+                headers: getHeaders()
+            }
+        );
 
-        const result = await response.json();
+        const data = await response.json();
+
+        if (response.status === 401) {
+            handleUnauthorized();
+            return;
+        }
 
         if (!response.ok) {
-            throw new Error(result.message || "Failed to delete reservation.");
+            throw new Error(data.message || "Unable to delete reservation.");
         }
 
         alert("Reservation deleted successfully!");
-
         await loadReservations();
 
     } catch (error) {
         alert(error.message);
-        console.error("Delete reservation error:", error);
     }
 }
 
+// ==========================================
+// CSP-SAFE EVENT DELEGATION
+// ==========================================
 
-// PREVENT PAST EVENT DATES FOR NEW RESERVATIONS
-document.getElementById("eventDate").min =
-    new Date().toLocaleDateString("en-CA");
+reservationTable.addEventListener("click", function(event) {
+    const button = event.target.closest("button[data-action]");
 
+    if (!button) return;
 
-// INITIAL PAGE LOAD
+    const action = button.dataset.action;
+    const id = button.dataset.id;
+
+    if (!id) return;
+
+    if (action === "edit") {
+        editReservation(id);
+    } else if (action === "delete") {
+        deleteReservation(id);
+    }
+});
+
+// ==========================================
+// INITIALIZE PAGE
+// ==========================================
+
 async function initializeReservationsPage() {
-    await loadItems();
+    if (!TOKEN || !currentUser) return;
+
+    setupRoleNavigation();
+
+    await loadInventoryItems();
     await loadReservations();
 }
 

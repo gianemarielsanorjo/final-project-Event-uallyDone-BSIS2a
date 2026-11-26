@@ -41,6 +41,10 @@ const registerValidation = [
         .isEmail()
         .withMessage("Please enter a valid email address."),
 
+    body("role")
+        .isIn(["Student", "Event Organizer"])
+        .withMessage("Please select a valid registration role."),
+
     body("password")
         .isLength({ min: 6 })
         .withMessage("Password must be at least 6 characters.")
@@ -92,7 +96,7 @@ router.get("/profile", protect, (req, res) => {
     });
 });
 
-// NEW SECURE DATA ROUTE
+// PROTECTED DATA ROUTE
 router.get("/secure-data", protect, (req, res) => {
     res.status(200).json({
         message: "Secure data access granted!",
