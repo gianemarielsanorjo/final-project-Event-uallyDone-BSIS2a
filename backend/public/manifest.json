@@ -1,0 +1,20 @@
+
+{
+  "name": "EVENT-UALLY DONE",
+  "short_name": "EVENTUALLY",
+  "description": "Event Inventory and Reservation Management System",
+  "start_url": "/login.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#203F65",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#203F65">
+
     <title>EVENT-UALLY DONE | Dashboard</title>
+
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="/manifest.json">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -129,7 +134,7 @@
             <a href="/dashboard" class="active">Dashboard</a>
             <a href="/items.html">Inventory</a>
             <a href="/reservations.html">Reservations</a>
-            <a href="#" class="logout-link" onclick="logout(event)">Logout</a>
+            <a href="#" class="logout-link" id="logoutLink">Logout</a>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -196,97 +201,10 @@
     </div>
 </div>
 
-<script>
-
-    // GET LOGGED-IN USER
-    let user = null;
-
-    try {
-        user = JSON.parse(localStorage.getItem("user") || "null");
-    } catch (error) {
-        console.error("Unable to read user information:", error);
-    }
-
-    document.getElementById("userName").textContent =
-        user && user.full_name ? user.full_name : "Guest";
-
-
-    // LOAD DASHBOARD DATA
-    async function loadDashboard() {
-
-        const message = document.getElementById("message");
-        const apiStatus = document.getElementById("apiStatus");
-
-        try {
-
-            const [itemsResponse, reservationsResponse] =
-                await Promise.all([
-                    fetch("/api/items"),
-                    fetch("/api/reservations")
-                ]);
-
-            if (!itemsResponse.ok) {
-                throw new Error("Unable to load inventory items.");
-            }
-
-            if (!reservationsResponse.ok) {
-                throw new Error("Unable to load reservations.");
-            }
-
-            const items = await itemsResponse.json();
-            const reservations = await reservationsResponse.json();
-
-            if (!Array.isArray(items) || !Array.isArray(reservations)) {
-                throw new Error("Invalid dashboard data received.");
-            }
-
-            document.getElementById("totalItems").textContent =
-                items.length;
-
-            document.getElementById("totalReservations").textContent =
-                reservations.length;
-
-            message.className = "alert alert-success";
-            message.textContent = "Dashboard loaded successfully!";
-
-            apiStatus.textContent =
-                "Connected to EVENT-UALLY DONE API.";
-
-        } catch (error) {
-
-            message.className = "alert alert-warning";
-            message.textContent = error.message;
-
-            apiStatus.textContent =
-                "Some dashboard data could not be loaded.";
-
-            console.error("Dashboard Error:", error);
-
-        }
-    }
-
-
-    // LOGOUT
-    function logout(event) {
-
-        if (event) {
-            event.preventDefault();
-        }
-
-        // Clear login information
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-
-        // Redirect to the actual login page
-        window.location.replace("/login.html");
-    }
-
-
-    // START DASHBOARD
-    loadDashboard();
-
-</script>
+<!-- EXTERNAL JAVASCRIPT FILES -->
+<script src="/js/dashboard.js" defer></script>
+<script src="/js/pwa.js" defer></script>
 
 </body>
 </html>
-```
+
